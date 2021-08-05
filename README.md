@@ -9,6 +9,7 @@
 ## Оглавление
 - [1. Общее описаниие, ER-диаграмма](#1)
 - [2. Дополнительные Ограничения и Индексы](#2)
+- [3. Установка Postgres и подключение](#3)
 
 ## <a id="1" />
 ###  1. Структура организации состоит из отделов:
@@ -65,3 +66,7 @@
     ```
     CONSTRAINT Check_Price CHECK ( PricePurchase > 0 )
     ```
+## <a id="3" /> 
+3. Установка Postgres и подключение
+    - Connect to Postgres from Docker![gif](./dockerConn.gif)
+    - Connect to Postgres from PG Admin![gif](./pgAdminConn.gif)
