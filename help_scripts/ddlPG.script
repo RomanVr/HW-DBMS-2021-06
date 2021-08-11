@@ -1,0 +1,26 @@
+#Табличное пространство
+su postgres
+mkdir ts_dir
+
+CREATE ROLE root;
+
+#Запуск файла со скриптами psql
+psql -f thefile.sql targetdatabase
+#Запуск из оболочки psql, необходимо учитывать место запуска psql
+\i ./sql_scripts/pg-setup.sql
+
+SELECT spcname FROM pg_tablespace;
+
+CREATE TABLESPACE tablespace_pg LOCATION '/var/lib/postgresql/ts_dir';
+
+#Теперь при создании базы данных можно указать ей табличное пространство по умолчанию с помощью параметра TABLESPACE:
+CREATE DATABASE orderManSys ENCODING 'UTF8' TABLESPACE tablespace_pg;
+
+ALTER TABLE move_table SET TABLESPACE tablespace_move_table;
+
+ALTER INDEX i_move_table SET TABLESPACE tablespace_move_table;
+
+
+
+
+

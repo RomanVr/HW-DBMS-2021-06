@@ -1,0 +1,15 @@
+#Создаем Dockerfile
+#Собираем образ
+docker build . --tag mypg1
+exit 
+#Запуск контейнера
+docker run --name mypgrun -p 5432:5432 -d mypg1
+-v /home/romanvr/Projects/DockerPG:/var/lib/postgresql
+
+docker exec -it mypgrun /bin/bash
+docker exec -it mypgrun psql -U postgres
+
+#В этом варианте не подключается psql
+docker run --name mypgrun -p 5432:5432 -it mypg1 /bin/bash
+
+
