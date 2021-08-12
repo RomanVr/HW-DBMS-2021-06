@@ -70,3 +70,7 @@
 3. Установка Postgres и подключение
     - Connect to Postgres from Docker![gif](./dockerConn.gif)
     - Connect to Postgres from PG Admin![gif](./pgAdminConn.gif)
+4. Создание объектов БД
+- [setup](./sql_scripts/pg-setup.sql)
+- [create tables](./sql_scripts/create_tables.sql)
+- [create users](./sql_scripts/create_users.sql)
