@@ -10,6 +10,7 @@
 - [1. Общее описаниие, ER-диаграмма](#1)
 - [2. Дополнительные Ограничения и Индексы](#2)
 - [3. Установка Postgres и подключение](#3)
+- [4. Создание объектов БД](#4)
 
 ## <a id="1" />
 ###  1. Структура организации состоит из отделов:
@@ -70,6 +71,7 @@
 3. Установка Postgres и подключение
     - Connect to Postgres from Docker![gif](./dockerConn.gif)
     - Connect to Postgres from PG Admin![gif](./pgAdminConn.gif)
+## <a id="4" /> 
 4. Создание объектов БД
 - [setup](./sql_scripts/pg-setup.sql)
 - [create tables](./sql_scripts/create_tables.sql)
