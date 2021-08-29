@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "public".Organization
  NameOrganization varchar(100) NOT NULL,
  Location         varchar(100) NOT NULL,
  TypeOrganization varchar(50) NOT NULL, 
- LastUpdate       timestamp NOT NULL,
+ LastUpdate       timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_organization PRIMARY KEY ( "Id" ),
  CONSTRAINT unique_organization UNIQUE (NameOrganization)
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS "public".People
  "Position"        varchar(50) NOT NULL,
  Chief_Id        int NOT NULL,
  Organization_Id int NOT NULL,
- LastUpdate      timestamp NOT NULL,
+ LastUpdate      timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_people PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_117 FOREIGN KEY ( Chief_Id ) REFERENCES "public".People ( "Id" ),
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS management."Order"
  DataCreate      date NOT NULL,
  Customer_Id     int NOT NULL,
  DeliveryAddress text NOT NULL,
- LastUpdate      timestamp NOT NULL,
+ LastUpdate      timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_order PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_21 FOREIGN KEY ( Customer_Id ) REFERENCES "public".People ( "Id" ),
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS prepare.TypeAssembly
  start 1
  ),
  NameAssembly varchar(50) NOT NULL,
- LastUpdate      timestamp NOT NULL,
+ LastUpdate      timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_typeassemble PRIMARY KEY ( "Id" ),
  CONSTRAINT unique_assembly UNIQUE (NameAssembly)
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS prepare."Module"
  NameModule     varchar(100) NOT NULL,
  Constructor_Id int NOT NULL,
  Description    text NOT NULL,
- LastUpdate      timestamp NOT NULL,
+ LastUpdate      timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_module PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_72 FOREIGN KEY ( Constructor_Id ) REFERENCES "public".People ( "Id" ),
@@ -119,11 +119,11 @@ CREATE TABLE IF NOT EXISTS prepare.Goods
  minvalue 1
  start 1
  ),
- NameGoods       varchar(50) NOT NULL,
+ NameGoods       varchar(200) NOT NULL,
  Pins            int NOT NULL,
  TypeAssembly_Id int NOT NULL,
  Description     varchar(50) NOT NULL,
- LastUpdate      timestamp NOT NULL,
+ LastUpdate      timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_goods PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_34 FOREIGN KEY ( TypeAssembly_Id ) REFERENCES prepare.TypeAssembly ( "Id" ),
@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS management.OrderSpecification
  Module_Id int NOT NULL,
  Quantity  int NOT NULL,
  Assembly  boolean NOT NULL,
- LastUpdate      timestamp NOT NULL,
+ LastUpdate      timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_orderspecification PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_52 FOREIGN KEY ( Order_Id ) REFERENCES management."Order" ( "Id" ),
@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS purchase.Invoice
  NameInvoice varchar(50) NOT NULL,
  DataCreate  date NOT NULL,
  Payment     double precision NOT NULL,
- LastUpdate  timestamp NOT NULL,
+ LastUpdate  timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_invoice PRIMARY KEY ( "Id" ),
  CONSTRAINT unique_Invoice UNIQUE (NameInvoice)
@@ -194,7 +194,7 @@ CREATE TABLE IF NOT EXISTS purchase.CommercialOfferGoods
  Description         text NULL,
  Invoice_Id          bigint NOT NULL,
  OrderSalor          varchar(50) NOT NULL,
- LastUpdate          timestamp NOT NULL,
+ LastUpdate          timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_commercialoffergoods PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_193 FOREIGN KEY ( GoodsManufaction_Id ) REFERENCES prepare.Goods ( "Id" ),
@@ -224,7 +224,7 @@ CREATE TABLE IF NOT EXISTS prepare.CommercialOfferAssembly
  ForOffer        boolean NULL,
  ForPurchase     boolean NULL,
  Invoice_Id      bigint NULL,
- LastUpdate      timestamp NOT NULL,
+ LastUpdate      timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_coomercialofferassembly PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_156 FOREIGN KEY ( Contractor_Id ) REFERENCES "public".Organization ( "Id" ),
@@ -252,7 +252,7 @@ CREATE TABLE IF NOT EXISTS purchase.DeliveryRelation
  DateShipment      date NOT NULL,
  DateDelivery      date NOT NULL,
  Destination       varchar(50) NOT NULL,
- LastUpdate        timestamp NOT NULL,
+ LastUpdate        timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_deliveryrelation PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_254 FOREIGN KEY ( CommOfferGoods_Id ) REFERENCES purchase.CommercialOfferGoods ( "Id" )
@@ -274,7 +274,7 @@ CREATE TABLE IF NOT EXISTS store.Stock
  Quantity            double precision NOT NULL,
  DateRevise          date NOT NULL,
  WarehouseWoorker_Id int NOT NULL,
- LastUpdate          timestamp NOT NULL,
+ LastUpdate          timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_stock PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_266 FOREIGN KEY ( DeliveryRelation_Id ) REFERENCES purchase.DeliveryRelation ( "Id" ),
@@ -300,7 +300,7 @@ CREATE TABLE IF NOT EXISTS store.StockSet
  WarehouseWoorker_Id int NOT NULL,
  DateShipment        date NULL,
  Assembly_Id         bigint NULL,
- LastUpdate          timestamp NOT NULL,
+ LastUpdate          timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_stockset PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_286 FOREIGN KEY ( Stock_Id ) REFERENCES store.Stock ( "Id" ),
@@ -331,7 +331,7 @@ CREATE TABLE IF NOT EXISTS management.CommercialOfferOrder
  ManagerPurchase_Id      int NULL,
  StockSet_Id             bigint NULL,
  DateShipmentOrder       date NULL,
- LastUpdate              timestamp NOT NULL,
+ LastUpdate              timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_commercialoffer PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_134 FOREIGN KEY ( ManagerPurchase_Id ) REFERENCES "public".Organization ( "Id" ),
@@ -360,7 +360,7 @@ CREATE TABLE IF NOT EXISTS store.TableSupplyModule
  Quantity          double precision NOT NULL,
  Descryption       text NULL,
  DateShipmentOrder date NULL,
- LastUpdate        timestamp NOT NULL,
+ LastUpdate        timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_tablesupplaymodule PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_307 FOREIGN KEY ( OrderSp_Id ) REFERENCES management.OrderSpecification ( "Id" ),
@@ -386,7 +386,7 @@ CREATE TABLE IF NOT EXISTS prepare.ModuleSpecification
  NumberSpecification int NULL,
  "Position"          varchar(200) NULL,
  Note                text NULL,
- LastUpdate          timestamp NOT NULL,
+ LastUpdate          timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_modulespecification PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_41 FOREIGN KEY ( Goods_Id ) REFERENCES prepare.Goods ( "Id" ),
@@ -406,7 +406,7 @@ CREATE TABLE IF NOT EXISTS purchase.PurchaseRelation
  ),
  CommOfferOrder_Id bigint NOT NULL,
  CommOfferGoods_Id bigint NOT NULL,
- LastUpdate        timestamp NOT NULL,
+ LastUpdate        timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_purchase PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_239 FOREIGN KEY ( CommOfferOrder_Id ) REFERENCES management.CommercialOfferOrder ( "Id" ),
