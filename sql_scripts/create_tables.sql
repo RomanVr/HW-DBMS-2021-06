@@ -2,13 +2,15 @@
 
 CREATE TABLE IF NOT EXISTS "public".Organization
 (
- "Id"               int NOT NULL GENERATED ALWAYS AS IDENTITY (
+ "Id"             int NOT NULL GENERATED ALWAYS AS IDENTITY (
  minvalue 1
  start 1
  ),
  NameOrganization varchar(100) NOT NULL,
  Location         varchar(100) NOT NULL,
- TypeOrganization varchar(50) NOT NULL,
+ TypeOrganization varchar(50) NOT NULL, 
+ LastUpdate       timestamp NOT NULL,
+
  CONSTRAINT PK_organization PRIMARY KEY ( "Id" ),
  CONSTRAINT unique_organization UNIQUE (NameOrganization)
 );
@@ -32,6 +34,7 @@ CREATE TABLE IF NOT EXISTS "public".People
  "Position"        varchar(50) NOT NULL,
  Chief_Id        int NOT NULL,
  Organization_Id int NOT NULL,
+ LastUpdate      timestamp NOT NULL,
 
  CONSTRAINT PK_people PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_117 FOREIGN KEY ( Chief_Id ) REFERENCES "public".People ( "Id" ),
@@ -63,6 +66,8 @@ CREATE TABLE IF NOT EXISTS management."Order"
  DataCreate      date NOT NULL,
  Customer_Id     int NOT NULL,
  DeliveryAddress text NOT NULL,
+ LastUpdate      timestamp NOT NULL,
+
  CONSTRAINT PK_order PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_21 FOREIGN KEY ( Customer_Id ) REFERENCES "public".People ( "Id" ),
  CONSTRAINT unique_order UNIQUE (NameOrder)
@@ -80,6 +85,8 @@ CREATE TABLE IF NOT EXISTS prepare.TypeAssembly
  start 1
  ),
  NameAssembly varchar(50) NOT NULL,
+ LastUpdate      timestamp NOT NULL,
+
  CONSTRAINT PK_typeassemble PRIMARY KEY ( "Id" ),
  CONSTRAINT unique_assembly UNIQUE (NameAssembly)
 );
@@ -95,6 +102,8 @@ CREATE TABLE IF NOT EXISTS prepare."Module"
  NameModule     varchar(100) NOT NULL,
  Constructor_Id int NOT NULL,
  Description    text NOT NULL,
+ LastUpdate      timestamp NOT NULL,
+
  CONSTRAINT PK_module PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_72 FOREIGN KEY ( Constructor_Id ) REFERENCES "public".People ( "Id" ),
  CONSTRAINT unique_Module UNIQUE (NameModule)
@@ -114,6 +123,8 @@ CREATE TABLE IF NOT EXISTS prepare.Goods
  Pins            int NOT NULL,
  TypeAssembly_Id int NOT NULL,
  Description     varchar(50) NOT NULL,
+ LastUpdate      timestamp NOT NULL,
+
  CONSTRAINT PK_goods PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_34 FOREIGN KEY ( TypeAssembly_Id ) REFERENCES prepare.TypeAssembly ( "Id" ),
  CONSTRAINT unique_Goods UNIQUE (NameGoods)
@@ -135,6 +146,8 @@ CREATE TABLE IF NOT EXISTS management.OrderSpecification
  Module_Id int NOT NULL,
  Quantity  int NOT NULL,
  Assembly  boolean NOT NULL,
+ LastUpdate      timestamp NOT NULL,
+
  CONSTRAINT PK_orderspecification PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_52 FOREIGN KEY ( Order_Id ) REFERENCES management."Order" ( "Id" ),
  CONSTRAINT FK_93 FOREIGN KEY ( Module_Id ) REFERENCES prepare."Module" ( "Id" )
@@ -153,7 +166,9 @@ CREATE TABLE IF NOT EXISTS purchase.Invoice
  ),
  NameInvoice varchar(50) NOT NULL,
  DataCreate  date NOT NULL,
- "Payment%"    double precision NOT NULL,
+ Payment     double precision NOT NULL,
+ LastUpdate  timestamp NOT NULL,
+
  CONSTRAINT PK_invoice PRIMARY KEY ( "Id" ),
  CONSTRAINT unique_Invoice UNIQUE (NameInvoice)
 );
@@ -179,6 +194,8 @@ CREATE TABLE IF NOT EXISTS purchase.CommercialOfferGoods
  Description         text NULL,
  Invoice_Id          bigint NOT NULL,
  OrderSalor          varchar(50) NOT NULL,
+ LastUpdate          timestamp NOT NULL,
+
  CONSTRAINT PK_commercialoffergoods PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_193 FOREIGN KEY ( GoodsManufaction_Id ) REFERENCES prepare.Goods ( "Id" ),
  CONSTRAINT FK_196 FOREIGN KEY ( Manufaction_Id ) REFERENCES "public".Organization ( "Id" ),
@@ -207,6 +224,8 @@ CREATE TABLE IF NOT EXISTS prepare.CommercialOfferAssembly
  ForOffer        boolean NULL,
  ForPurchase     boolean NULL,
  Invoice_Id      bigint NULL,
+ LastUpdate      timestamp NOT NULL,
+
  CONSTRAINT PK_coomercialofferassembly PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_156 FOREIGN KEY ( Contractor_Id ) REFERENCES "public".Organization ( "Id" ),
  CONSTRAINT FK_159 FOREIGN KEY ( TypeAssembly_Id ) REFERENCES prepare.TypeAssembly ( "Id" ),
@@ -233,6 +252,8 @@ CREATE TABLE IF NOT EXISTS purchase.DeliveryRelation
  DateShipment      date NOT NULL,
  DateDelivery      date NOT NULL,
  Destination       varchar(50) NOT NULL,
+ LastUpdate        timestamp NOT NULL,
+
  CONSTRAINT PK_deliveryrelation PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_254 FOREIGN KEY ( CommOfferGoods_Id ) REFERENCES purchase.CommercialOfferGoods ( "Id" )
 );
@@ -253,6 +274,8 @@ CREATE TABLE IF NOT EXISTS store.Stock
  Quantity            double precision NOT NULL,
  DateRevise          date NOT NULL,
  WarehouseWoorker_Id int NOT NULL,
+ LastUpdate          timestamp NOT NULL,
+
  CONSTRAINT PK_stock PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_266 FOREIGN KEY ( DeliveryRelation_Id ) REFERENCES purchase.DeliveryRelation ( "Id" ),
  CONSTRAINT FK_271 FOREIGN KEY ( WarehouseWoorker_Id ) REFERENCES "public".People ( "Id" )
@@ -277,6 +300,8 @@ CREATE TABLE IF NOT EXISTS store.StockSet
  WarehouseWoorker_Id int NOT NULL,
  DateShipment        date NULL,
  Assembly_Id         bigint NULL,
+ LastUpdate          timestamp NOT NULL,
+
  CONSTRAINT PK_stockset PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_286 FOREIGN KEY ( Stock_Id ) REFERENCES store.Stock ( "Id" ),
  CONSTRAINT FK_293 FOREIGN KEY ( WarehouseWoorker_Id ) REFERENCES "public".People ( "Id" ),
@@ -297,7 +322,6 @@ CREATE TABLE IF NOT EXISTS management.CommercialOfferOrder
  ),
  OrderSp_Id              bigint NOT NULL,
  GoodsCustomer_Id        bigint NOT NULL,
- CommercialOfferGoods_Id bigint NOT NULL,
  QuantitySpecification   double precision NOT NULL,
  unit                    varchar(50) NOT NULL,
  NameApproval            boolean NULL,
@@ -307,16 +331,16 @@ CREATE TABLE IF NOT EXISTS management.CommercialOfferOrder
  ManagerPurchase_Id      int NULL,
  StockSet_Id             bigint NULL,
  DateShipmentOrder       date NULL,
+ LastUpdate              timestamp NOT NULL,
+
  CONSTRAINT PK_commercialoffer PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_134 FOREIGN KEY ( ManagerPurchase_Id ) REFERENCES "public".Organization ( "Id" ),
- CONSTRAINT FK_211 FOREIGN KEY ( CommercialOfferGoods_Id ) REFERENCES purchase.CommercialOfferGoods ( "Id" ),
  CONSTRAINT FK_296 FOREIGN KEY ( StockSet_Id ) REFERENCES store.StockSet ( "Id" ),
  CONSTRAINT FK_84 FOREIGN KEY ( GoodsCustomer_Id ) REFERENCES prepare.Goods ( "Id" ),
  CONSTRAINT FK_90 FOREIGN KEY ( OrderSp_Id ) REFERENCES management.OrderSpecification ( "Id" )
 );
 
 CREATE INDEX fkIdx_135 ON management.CommercialOfferOrder ( ManagerPurchase_Id );
-CREATE INDEX fkIdx_212 ON management.CommercialOfferOrder ( CommercialOfferGoods_Id );
 CREATE INDEX fkIdx_297 ON management.CommercialOfferOrder ( StockSet_Id );
 CREATE INDEX fkIdx_85 ON management.CommercialOfferOrder ( GoodsCustomer_Id );
 CREATE INDEX fkIdx_91 ON management.CommercialOfferOrder ( OrderSp_Id );
@@ -336,6 +360,8 @@ CREATE TABLE IF NOT EXISTS store.TableSupplyModule
  Quantity          double precision NOT NULL,
  Descryption       text NULL,
  DateShipmentOrder date NULL,
+ LastUpdate        timestamp NOT NULL,
+
  CONSTRAINT PK_tablesupplaymodule PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_307 FOREIGN KEY ( OrderSp_Id ) REFERENCES management.OrderSpecification ( "Id" ),
  CONSTRAINT FK_312 FOREIGN KEY ( Assembly_Id ) REFERENCES prepare.CommercialOfferAssembly ( "Id" )
@@ -358,8 +384,10 @@ CREATE TABLE IF NOT EXISTS prepare.ModuleSpecification
  unit                varchar(50) NOT NULL,
  NumberCustomer      int NOT NULL,
  NumberSpecification int NULL,
- "Position"            varchar(200) NULL,
+ "Position"          varchar(200) NULL,
  Note                text NULL,
+ LastUpdate          timestamp NOT NULL,
+
  CONSTRAINT PK_modulespecification PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_41 FOREIGN KEY ( Goods_Id ) REFERENCES prepare.Goods ( "Id" ),
  CONSTRAINT FK_76 FOREIGN KEY ( Module_Id ) REFERENCES prepare."Module" ( "Id" )
@@ -378,6 +406,8 @@ CREATE TABLE IF NOT EXISTS purchase.PurchaseRelation
  ),
  CommOfferOrder_Id bigint NOT NULL,
  CommOfferGoods_Id bigint NOT NULL,
+ LastUpdate        timestamp NOT NULL,
+
  CONSTRAINT PK_purchase PRIMARY KEY ( "Id" ),
  CONSTRAINT FK_239 FOREIGN KEY ( CommOfferOrder_Id ) REFERENCES management.CommercialOfferOrder ( "Id" ),
  CONSTRAINT FK_248 FOREIGN KEY ( CommOfferGoods_Id ) REFERENCES purchase.CommercialOfferGoods ( "Id" )
@@ -385,5 +415,3 @@ CREATE TABLE IF NOT EXISTS purchase.PurchaseRelation
 
 CREATE INDEX fkIdx_240 ON purchase.PurchaseRelation ( CommOfferOrder_Id );
 CREATE INDEX fkIdx_249 ON purchase.PurchaseRelation ( CommOfferGoods_Id );
-
-
