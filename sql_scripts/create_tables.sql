@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS "public".Organization
  ),
  NameOrganization varchar(100) NOT NULL,
  Location         varchar(100) NOT NULL,
- TypeOrganization varchar(50) NOT NULL, 
+ TypeOrganization varchar(50) NOT NULL,
  LastUpdate       timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_organization PRIMARY KEY ( "Id" ),
@@ -29,10 +29,10 @@ CREATE TABLE IF NOT EXISTS "public".People
  Age             int NULL,
  Tel_mobile      varchar(50) NOT NULL,
  Tel_work        varchar(50) NOT NULL,
- "e-mail"          varchar(50) NOT NULL,
+ "e-mail"        varchar(50) NOT NULL,
  Departament     varchar(50) NOT NULL,
- "Position"        varchar(50) NOT NULL,
- Chief_Id        int NOT NULL,
+ "Position"      varchar(50) NOT NULL,
+ Chief_Id        int NULL,
  Organization_Id int NOT NULL,
  LastUpdate      timestamp NOT NULL DEFAULT now(),
 
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS prepare."Module"
  ),
  NameModule     varchar(100) NOT NULL,
  Constructor_Id int NOT NULL,
- Description    text NOT NULL,
+ Description    text COLLATE pg_catalog."default",
  LastUpdate      timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_module PRIMARY KEY ( "Id" ),

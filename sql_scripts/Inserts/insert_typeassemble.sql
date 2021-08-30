@@ -1,1 +1,1 @@
-INSERT INTO prepare.typeassembly (nameassembly) VALUES ('SMT'), ('DIP');
+INSERT INTO prepare.typeassembly (nameassembly) VALUES ('SMT'), ('DIP'), ('Сборка');
