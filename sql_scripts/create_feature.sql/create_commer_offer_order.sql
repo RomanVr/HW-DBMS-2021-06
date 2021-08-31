@@ -9,9 +9,7 @@ INSERT INTO management.commercialofferorder(ordersp_id, goodscustomer_id, quanti
 -- Запрос на поиск человека по части его имени 
 SELECT "Id", firstname, lastname, patronymic, age, tel_mobile, tel_work, "e-mail", departament, "Position", chief_id, organization_id, lastupdate
 	FROM public.people
-	WHERE firstname ilike '%ч%'
-	OR 	  lastname ilike '%ч%'
-	OR	  patronymic ilike '%ч%';
+	WHERE firstname ~* '(р|о)о';
 
 -- Устанавливаем отвественного менеджера за расчет коммерческого предложения
 UPDATE management.commercialofferorder
@@ -21,7 +19,6 @@ UPDATE management.commercialofferorder
 	WHERE orderspecification.order_id = 1;
 
 -- Удаляем модуль из спецификации заказа и расчета коммерческого предложения
-DELETE management.commercialofferorder FROM management.commercialofferorder
-		USING management.orderspecification
-		INNER JOIN management.orderspecification ON orderspecification."Id" = commercialofferorder.ordersp_id
-	WHERE orderspecification.module_id = 1;
+DELETE FROM management.commercialofferorder
+	USING management.orderspecification 
+		WHERE commercialofferorder.ordersp_id = orderspecification."Id" and orderspecification.module_id = 1;

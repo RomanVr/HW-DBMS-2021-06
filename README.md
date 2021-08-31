@@ -11,6 +11,7 @@
 - [2. Дополнительные Ограничения и Индексы](#2)
 - [3. Установка Postgres и подключение](#3)
 - [4. Создание объектов БД](#4)
+- [5. DML: вставка, обновление, удаление, выборка данных](#5)
 
 ## <a id="1" />
 ###  1. Структура организации состоит из отделов:
@@ -76,3 +77,51 @@
 - [setup](./sql_scripts/pg-setup.sql)
 - [create tables](./sql_scripts/create_tables.sql)
 - [create users](./sql_scripts/create_users.sql)
+## <a id="5" />
+5. DML: вставка, обновление, удаление, выборка данных
+- Вставка данных
+```
+INSERT INTO public.organization(
+	nameorganization, location, typeorganization)
+	VALUES ('РНИИРС', 'г. Ростов-на-Дону', 'заказчик'),
+  ('Алмаз-СП', 'г. Москва', 'исполнитель') RETURNING "Id";
+```
+- Вставка данных COPY
+```
+COPY prepare.goods (namegoods, pins, typeassembly_id, description) 
+FROM '/home/roman/Otus/HW-DBMS-2021-06/data/insert_goods_3.csv' 
+DELIMITER E'\\t' CSV QUOTE '\"' ESCAPE '''';"";
+```
+- Вставка данных с использованием SELECT
+```
+-- Создание заказа для расчета коммерческого предложения по компонентам
+INSERT INTO management.commercialofferorder(ordersp_id, goodscustomer_id, quantityspecification, unit)
+	SELECT orderspecification."Id", goods."Id" as goodscustomer_id, (orderspecification.quantity * modulespecification.quantity) as quantity, modulespecification.unit 
+	FROM management."Order"
+			inner join management.orderspecification on "Order"."Id" = orderspecification.order_id
+			inner join "prepare".modulespecification on orderspecification.module_id = modulespecification.module_id
+			inner join "prepare".goods on modulespecification.goods_id = goods."Id";
+```
+- Запрос с использованием регулярного выражения
+```
+-- Запрос на поиск человека по части его имени 
+SELECT "Id", firstname, lastname, patronymic, age, tel_mobile, tel_work, "e-mail", departament, "Position", chief_id, organization_id, lastupdate
+	FROM public.people
+	WHERE firstname ~* '(р|о)о';
+```
+- Запрос с UPDATE FROM
+```
+-- Устанавливаем отвественного менеджера за расчет коммерческого предложения
+UPDATE management.commercialofferorder
+	SET managerpurchase_id=2, lastupdate=now()
+	FROM management.commercialofferorder as co
+		INNER JOIN management.orderspecification ON orderspecification."Id" = co.ordersp_id
+	WHERE orderspecification.order_id = 1;
+  ```
+  - DELETE с использованием USING
+  ```
+  -- Удаляем модуль из спецификации заказа и расчета коммерческого предложения
+DELETE FROM management.commercialofferorder
+	USING management.orderspecification 
+		WHERE commercialofferorder.ordersp_id = orderspecification."Id" and orderspecification.module_id = 1;
+```
