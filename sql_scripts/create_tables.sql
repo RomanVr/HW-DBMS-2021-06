@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS "public".Organization
  minvalue 1
  start 1
  ),
- NameOrganization varchar(100) NOT NULL,
- Location         varchar(100) NOT NULL,
- TypeOrganization varchar(50) NOT NULL,
+ NameOrganization varchar(250) NOT NULL,
+ Location         varchar(250) NOT NULL,
+ TypeOrganization varchar(250) NOT NULL,
  LastUpdate       timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_organization PRIMARY KEY ( "Id" ),
@@ -23,15 +23,15 @@ CREATE TABLE IF NOT EXISTS "public".People
  minvalue 1
  start 1
  ),
- FirstName       varchar(50) NOT NULL,
- LastName        varchar(50) NOT NULL,
- Patronymic      varchar(50) NOT NULL,
+ FirstName       varchar(250) NOT NULL,
+ LastName        varchar(250) NOT NULL,
+ Patronymic      varchar(250) NOT NULL,
  Age             int NULL,
- Tel_mobile      varchar(50) NOT NULL,
- Tel_work        varchar(50) NOT NULL,
- "e-mail"        varchar(50) NOT NULL,
- Departament     varchar(50) NOT NULL,
- "Position"      varchar(50) NOT NULL,
+ Tel_mobile      varchar(250) NOT NULL,
+ Tel_work        varchar(250) NOT NULL,
+ "e-mail"        varchar(250) NOT NULL,
+ Departament     varchar(250) NOT NULL,
+ "Position"      varchar(250) NOT NULL,
  Chief_Id        int NULL,
  Organization_Id int NOT NULL,
  LastUpdate      timestamp NOT NULL DEFAULT now(),
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS management."Order"
  minvalue 1
  start 1
  ),
- NameOrder       varchar(100) NOT NULL,
+ NameOrder       varchar(250) NOT NULL,
  DataCreate      date NOT NULL,
  Customer_Id     int NOT NULL,
  DeliveryAddress text NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS prepare.TypeAssembly
  minvalue 1
  start 1
  ),
- NameAssembly varchar(50) NOT NULL,
+ NameAssembly varchar(250) NOT NULL,
  LastUpdate      timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_typeassemble PRIMARY KEY ( "Id" ),
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS prepare."Module"
  minvalue 1
  start 1
  ),
- NameModule     varchar(100) NOT NULL,
+ NameModule     varchar(250) NOT NULL,
  Constructor_Id int NOT NULL,
  Description    text COLLATE pg_catalog."default",
  LastUpdate      timestamp NOT NULL DEFAULT now(),
@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS prepare.Goods
  NameGoods       varchar(200) NOT NULL,
  Pins            int NOT NULL,
  TypeAssembly_Id int NOT NULL,
- Description     varchar(50) NOT NULL,
+ Description     varchar(250) NOT NULL,
  LastUpdate      timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_goods PRIMARY KEY ( "Id" ),
@@ -164,7 +164,7 @@ CREATE TABLE IF NOT EXISTS purchase.Invoice
  minvalue 1
  start 1
  ),
- NameInvoice varchar(50) NOT NULL,
+ NameInvoice varchar(250) NOT NULL,
  DataCreate  date NOT NULL,
  Payment     double precision NOT NULL,
  LastUpdate  timestamp NOT NULL DEFAULT now(),
@@ -184,7 +184,7 @@ CREATE TABLE IF NOT EXISTS purchase.CommercialOfferGoods
  GoodsManufaction_Id bigint NOT NULL,
  QuantityPurchase    double precision NOT NULL,
  PricePurchase       double precision NOT NULL,
- Currency            varchar(50) NOT NULL,
+ Currency            varchar(250) NOT NULL,
  PriceSale           double precision NOT NULL,
  DeliveryTime        int NOT NULL,
  MinQuota            boolean NOT NULL,
@@ -193,7 +193,7 @@ CREATE TABLE IF NOT EXISTS purchase.CommercialOfferGoods
  Manager_Id          int NOT NULL,
  Description         text NULL,
  Invoice_Id          bigint NOT NULL,
- OrderSalor          varchar(50) NOT NULL,
+ OrderSalor          varchar(250) NOT NULL,
  LastUpdate          timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_commercialoffergoods PRIMARY KEY ( "Id" ),
@@ -248,10 +248,10 @@ CREATE TABLE IF NOT EXISTS purchase.DeliveryRelation
  ),
  CommOfferGoods_Id bigint NOT NULL,
  Quantity          double precision NOT NULL,
- NameDelivery      varchar(50) NOT NULL,
+ NameDelivery      varchar(250) NOT NULL,
  DateShipment      date NOT NULL,
  DateDelivery      date NOT NULL,
- Destination       varchar(50) NOT NULL,
+ Destination       varchar(250) NOT NULL,
  LastUpdate        timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_deliveryrelation PRIMARY KEY ( "Id" ),
@@ -323,7 +323,7 @@ CREATE TABLE IF NOT EXISTS management.CommercialOfferOrder
  OrderSp_Id              bigint NOT NULL,
  GoodsCustomer_Id        bigint NOT NULL,
  QuantitySpecification   double precision NOT NULL,
- unit                    varchar(50) NOT NULL,
+ unit                    varchar(250) NOT NULL,
  NameApproval            boolean NULL,
  DetailApproval          text NULL,
  Purchase                boolean NULL,
@@ -381,10 +381,10 @@ CREATE TABLE IF NOT EXISTS prepare.ModuleSpecification
  Goods_Id            bigint NOT NULL,
  Module_Id           int NOT NULL,
  Quantity            double precision NOT NULL,
- unit                varchar(50) NOT NULL,
+ unit                varchar(250) NOT NULL,
  NumberCustomer      int NOT NULL,
  NumberSpecification int NULL,
- "Position"          varchar(200) NULL,
+ "Position"          varchar(250) NULL,
  Note                text NULL,
  LastUpdate          timestamp NOT NULL DEFAULT now(),
 
