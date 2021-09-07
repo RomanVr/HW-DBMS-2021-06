@@ -23,18 +23,18 @@ CREATE TABLE IF NOT EXISTS public.People
   minvalue 1
   start 1
  ),
- FirstName       varchar(250) NOT NULL,
- LastName        varchar(250) NOT NULL,
- Patronymic      varchar(250) NOT NULL,
- Age             int NOT NULL DEFAULT 0,
- Tel_mobile      varchar(250) NOT NULL,
- Tel_work        varchar(250) NOT NULL,
- "e-mail"          varchar(250) NOT NULL,
- Departament     varchar(250) NOT NULL,
- Position        varchar(250) NOT NULL,
- Chief_id        int NULL,
- Organization_id int NOT NULL DEFAULT 0,
- LastUpdate      timestamp NOT NULL DEFAULT now(),
+ firstName       varchar(250) NOT NULL,
+ lastName        varchar(250) NOT NULL,
+ patronymic      varchar(250) NOT NULL,
+ age             int NOT NULL DEFAULT 0,
+ tel_mobile      varchar(250) NOT NULL,
+ tel_work        varchar(250) NOT NULL,
+ "e-mail"        varchar(250) NOT NULL,
+ departament     varchar(250) NOT NULL,
+ position        varchar(250) NOT NULL,
+ chief_id        int NOT NULL DEFAULT 1,
+ organization_id int NOT NULL DEFAULT 1,
+ lastUpdate      timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_people PRIMARY KEY ( id ),
  CONSTRAINT FK_117 FOREIGN KEY ( Chief_id ) REFERENCES "public".People ( id ),
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS management.Order
  ),
  NameOrder       varchar(250) NOT NULL,
  DataCreate      date NOT NULL,
- Customer_id     int NOT NULL,
+ Customer_id     int NOT NULL DEFAULT 1,
  DeliveryAddress text NOT NULL,
  LastUpdate      timestamp NOT NULL DEFAULT now(),
 
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS prepare.Module
   start 1
  ),
  NameModule     varchar(250) NOT NULL,
- Constructor_id int NOT NULL,
+ Constructor_id int NOT NULL DEFAULT 1,
  Description    text COLLATE pg_catalog."default",
  LastUpdate     timestamp NOT NULL DEFAULT now(),
 
@@ -137,15 +137,15 @@ CREATE INDEX fkIdx_35 ON prepare.Goods ( TypeAssembly_id );
 
 CREATE TABLE IF NOT EXISTS management.OrderSpecification
 (
- id        bigint NOT NULL GENERATED ALWAYS AS IDENTITY (
+ id          bigint NOT NULL GENERATED ALWAYS AS IDENTITY (
   minvalue 1
   start 1
  ),
- Order_id  bigint NOT NULL,
- Module_id int NOT NULL,
- Quantity  int NOT NULL,
- Assembly  boolean NOT NULL,
- LastUpdate      timestamp NOT NULL DEFAULT now(),
+ Order_id    bigint NOT NULL,
+ Module_id   int NOT NULL,
+ Quantity    int NOT NULL,
+ Assembly    boolean NOT NULL DEFAULT false,
+ LastUpdate  timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_orderspecification PRIMARY KEY ( id ),
  CONSTRAINT FK_52 FOREIGN KEY ( Order_id ) REFERENCES management.Order ( id ),

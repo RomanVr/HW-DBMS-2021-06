@@ -7,7 +7,7 @@ COMMENT ON SCHEMA management IS 'Схема содержащая таблицы 
 CREATE SCHEMA IF NOT EXISTS prepare;
 COMMENT ON SCHEMA prepare IS 'Схема содержащая таблицы добавления новых компонентов и создания новых модулей';
 
-COMMENT ON SCHEMA "public" IS 'Схема по умолчанию для таблиц Организаций и 
+COMMENT ON SCHEMA public IS 'Схема по умолчанию для таблиц Организаций и 
 Людей';
 
 CREATE SCHEMA IF NOT EXISTS purchase;

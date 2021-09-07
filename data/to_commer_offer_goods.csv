@@ -1,0 +1,95 @@
+
+INSERT INTO purchase.commercialoffergoods(
+	id, goodsmanufaction_id, quantitypurchase, pricepurchase, currency, pricesale, deliverytime, minquota, manufaction_id, supplier_id, manager_id, description, invoice_id, ordersalor, lastupdate)
+	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+-- Table: purchase.commercialoffergoods
+
+-- DROP TABLE purchase.commercialoffergoods;
+
+CREATE TABLE IF NOT EXISTS purchase.commercialoffergoods
+(
+    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    goodsmanufaction_id bigint NOT NULL,
+    quantitypurchase numeric(20,6) NOT NULL,
+    pricepurchase numeric(20,6) NOT NULL,
+    currency character varying(250) COLLATE pg_catalog."default" NOT NULL,
+    pricesale numeric(20,6) NOT NULL,
+    deliverytime integer NOT NULL,
+    minquota boolean NOT NULL,
+    manufaction_id integer NOT NULL,
+    supplier_id integer NOT NULL,
+    manager_id integer NOT NULL,
+    description text COLLATE pg_catalog."default",
+    invoice_id bigint NOT NULL,
+    ordersalor character varying(250) COLLATE pg_catalog."default" NOT NULL,
+    lastupdate timestamp without time zone NOT NULL DEFAULT now(),
+    CONSTRAINT pk_commercialoffergoods PRIMARY KEY (id)
+        USING INDEX TABLESPACE tablespace_pg,
+    CONSTRAINT fk_193 FOREIGN KEY (goodsmanufaction_id)
+        REFERENCES prepare.goods (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_196 FOREIGN KEY (manufaction_id)
+        REFERENCES public.organization (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_199 FOREIGN KEY (supplier_id)
+        REFERENCES public.organization (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_202 FOREIGN KEY (manager_id)
+        REFERENCES public.people (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_245 FOREIGN KEY (invoice_id)
+        REFERENCES purchase.invoice (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT check_price CHECK (pricepurchase >= 0::numeric)
+)
+
+TABLESPACE tablespace_pg;
+
+ALTER TABLE purchase.commercialoffergoods
+    OWNER to postgres;
+-- Index: fkidx_194
+
+-- DROP INDEX purchase.fkidx_194;
+
+CREATE INDEX fkidx_194
+    ON purchase.commercialoffergoods USING btree
+    (goodsmanufaction_id ASC NULLS LAST)
+    TABLESPACE tablespace_pg;
+-- Index: fkidx_197
+
+-- DROP INDEX purchase.fkidx_197;
+
+CREATE INDEX fkidx_197
+    ON purchase.commercialoffergoods USING btree
+    (manufaction_id ASC NULLS LAST)
+    TABLESPACE tablespace_pg;
+-- Index: fkidx_200
+
+-- DROP INDEX purchase.fkidx_200;
+
+CREATE INDEX fkidx_200
+    ON purchase.commercialoffergoods USING btree
+    (supplier_id ASC NULLS LAST)
+    TABLESPACE tablespace_pg;
+-- Index: fkidx_203
+
+-- DROP INDEX purchase.fkidx_203;
+
+CREATE INDEX fkidx_203
+    ON purchase.commercialoffergoods USING btree
+    (manager_id ASC NULLS LAST)
+    TABLESPACE tablespace_pg;
+-- Index: fkidx_246
+
+-- DROP INDEX purchase.fkidx_246;
+
+CREATE INDEX fkidx_246
+    ON purchase.commercialoffergoods USING btree
+    (invoice_id ASC NULLS LAST)
+    TABLESPACE tablespace_pg;
