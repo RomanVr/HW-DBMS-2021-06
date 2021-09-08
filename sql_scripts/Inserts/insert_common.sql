@@ -43,3 +43,7 @@ INSERT INTO management.orderspecification(
 	(1, 3, 33, true),
 	(1, 4, 17, true),
 	(1, 5, 9, true) RETURNING id;
+
+INSERT INTO purchase.invoice(
+	nameinvoice, datacreate)
+	VALUES ('Av001', '2020-05-06') RETURNING id;
