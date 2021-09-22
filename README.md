@@ -12,6 +12,7 @@
 - [3. Установка Postgres и подключение](#3)
 - [4. Создание объектов БД](#4)
 - [5. DML: вставка, обновление, удаление, выборка данных](#5)
+- [6. Индексы и план запросов. Indexes and Explain](#6)
 
 ## <a id="1" />
 ###  1. Структура организации состоит из отделов:
@@ -125,3 +126,24 @@ DELETE FROM management.commercialofferorder
 	USING management.orderspecification 
 		WHERE commercialofferorder.ordersp_id = orderspecification."Id" and orderspecification.module_id = 1;
 ```
+## <a id="6" />
+6. Индексы и план запросов. Indexes and Explain
+  - 1) создание индекса
+  ```
+  CREATE UNIQUE INDEX idgoods
+    ON prepare.goods USING btree
+    (id) TABLESPACE tablespace_pg;
+  ```
+  ```
+  explain (analyze) select * from prepare.goods where id = 1;
+  ```
+  ```
+  Seq Scan on goods  (cost=0.00..7.01 rows=1 width=77) (actual time=0.011..0.040 rows=1 loops=1)
+    Filter: (id = 1)
+      Rows Removed by Filter: 240
+      Planning Time: 0.087 ms
+      Execution Time: 0.054 ms
+  ```
+  - 2) создание индекса полнотекстового поискаа
+  
+
