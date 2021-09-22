@@ -35,7 +35,7 @@
 + Составление логистических и финансовых отчетов
 + Отслеживание всего заказа на всех его этапах от начала выставления коммерческого предложения до моммента отправки заказчику
 
-## <a id="2" /> 
+## <a id="2" />
 ### 2. Дополнительные Ограничения и Индексы
 - table "People"
     - При создании таблицы добавляем ограничение на поле Age, которое ограничивает диапазон возраста.
@@ -49,7 +49,7 @@
     CREATE INDEX Name ON "public".People USING btree
     (
         LastName,
-        FirstName, 
+        FirstName,
         Patronymic
     );
     ```
@@ -69,11 +69,11 @@
     ```
     CONSTRAINT Check_Price CHECK ( PricePurchase > 0 )
     ```
-## <a id="3" /> 
+## <a id="3" />
 3. Установка Postgres и подключение
     - Connect to Postgres from Docker![gif](./dockerConn.gif)
     - Connect to Postgres from PG Admin![gif](./pgAdminConn.gif)
-## <a id="4" /> 
+## <a id="4" />
 4. Создание объектов БД
 - [setup](./sql_scripts/pg-setup.sql)
 - [create tables](./sql_scripts/create_tables.sql)
@@ -89,15 +89,15 @@ INSERT INTO public.organization(
 ```
 - Вставка данных COPY
 ```
-COPY prepare.goods (namegoods, pins, typeassembly_id, description) 
-FROM '/home/roman/Otus/HW-DBMS-2021-06/data/insert_goods_3.csv' 
+COPY prepare.goods (namegoods, pins, typeassembly_id, description)
+FROM '/home/roman/Otus/HW-DBMS-2021-06/data/insert_goods_3.csv'
 DELIMITER E'\\t' CSV QUOTE '\"' ESCAPE '''';"";
 ```
 - Вставка данных с использованием SELECT
 ```
 -- Создание заказа для расчета коммерческого предложения по компонентам
 INSERT INTO management.commercialofferorder(ordersp_id, goodscustomer_id, quantityspecification, unit)
-	SELECT orderspecification."Id", goods."Id" as goodscustomer_id, (orderspecification.quantity * modulespecification.quantity) as quantity, modulespecification.unit 
+	SELECT orderspecification."Id", goods."Id" as goodscustomer_id, (orderspecification.quantity * modulespecification.quantity) as quantity, modulespecification.unit
 	FROM management."Order"
 			inner join management.orderspecification on "Order"."Id" = orderspecification.order_id
 			inner join "prepare".modulespecification on orderspecification.module_id = modulespecification.module_id
@@ -105,7 +105,7 @@ INSERT INTO management.commercialofferorder(ordersp_id, goodscustomer_id, quanti
 ```
 - Запрос с использованием регулярного выражения
 ```
--- Запрос на поиск человека по части его имени 
+-- Запрос на поиск человека по части его имени
 SELECT "Id", firstname, lastname, patronymic, age, tel_mobile, tel_work, "e-mail", departament, "Position", chief_id, organization_id, lastupdate
 	FROM public.people
 	WHERE firstname ~* '(р|о)о';
@@ -123,27 +123,24 @@ UPDATE management.commercialofferorder
   ```
   -- Удаляем модуль из спецификации заказа и расчета коммерческого предложения
 DELETE FROM management.commercialofferorder
-	USING management.orderspecification 
+	USING management.orderspecification
 		WHERE commercialofferorder.ordersp_id = orderspecification."Id" and orderspecification.module_id = 1;
 ```
 ## <a id="6" />
 6. Индексы и план запросов. Indexes and Explain
   - 1) создание индекса
   ```
-  CREATE UNIQUE INDEX idgoods
-    ON prepare.goods USING btree
-    (id) TABLESPACE tablespace_pg;
+  CREATE UNIQUE INDEX IdGoods ON prepare.Goods ( id );
+  CREATE UNIQUE INDEX NameGoods ON prepare.Goods ( NameGoods );
+  ```
+  Анализ запроса на 10000 записях
+  ```
+  explain (analyze)  select * from prepare.goods where namegoods = 'STTH6003CW';
   ```
   ```
-  explain (analyze) select * from prepare.goods where id = 1;
-  ```
-  ```
-  Seq Scan on goods  (cost=0.00..7.01 rows=1 width=77) (actual time=0.011..0.040 rows=1 loops=1)
-    Filter: (id = 1)
-      Rows Removed by Filter: 240
-      Planning Time: 0.087 ms
-      Execution Time: 0.054 ms
+  Index Scan using namegoods on goods  (cost=0.29..8.30 rows=1 width=75) (actual time=0.026..0.027 rows=1 loops=1)
+    Index Cond: ((namegoods)::text = 'STTH6003CW'::text)
+      Planning Time: 0.118 ms
+      Execution Time: 0.047 ms
   ```
   - 2) создание индекса полнотекстового поискаа
-  
-

@@ -129,8 +129,8 @@ CREATE TABLE IF NOT EXISTS prepare.Goods
  CONSTRAINT FK_34 FOREIGN KEY ( TypeAssembly_id ) REFERENCES prepare.TypeAssembly ( id ),
  CONSTRAINT unique_Goods UNIQUE (NameGoods)
 );
-
-CREATE UNIQUE INDEX NameGoods ON prepare.Goods ( NameGoods ) INCLUDE ( NameGoods );
+CREATE UNIQUE INDEX IdGoods ON prepare.Goods ( id );
+CREATE UNIQUE INDEX NameGoods ON prepare.Goods ( NameGoods );
 CREATE INDEX fkIdx_35 ON prepare.Goods ( TypeAssembly_id );
 
 -- 7 ************************************** management.OrderSpecification
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS purchase.CommercialOfferGoods
  Manager_id          int NOT NULL,
  Description         text COLLATE pg_catalog."default",
  Invoice_id          bigint NOT NULL,
- OrderSalor          varchar(250) NOT NULL,
+ OrderSalor          varchar(250) NOT NULL DEFAULT '',
  LastUpdate          timestamp NOT NULL DEFAULT now(),
 
  CONSTRAINT PK_commercialoffergoods PRIMARY KEY ( id ),

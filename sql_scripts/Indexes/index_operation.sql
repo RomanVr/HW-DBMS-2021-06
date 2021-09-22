@@ -33,3 +33,8 @@ $$ LANGUAGE plpgsql;
 insert into prepare.goods (namegoods, pins, typeassembly_id, description)
 	select my_random_string(15), my_random_number(1, 48), 1, my_random_string(10)
 	from generate_series(1, 10000);
+
+set enable_indexscan=off;
+
+-- степень упорядоченности данных
+set attname, correlation from pg_stats where tablename='goods';
