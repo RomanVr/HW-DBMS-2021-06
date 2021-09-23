@@ -37,4 +37,38 @@ insert into prepare.goods (namegoods, pins, typeassembly_id, description)
 set enable_indexscan=off;
 
 -- степень упорядоченности данных
-set attname, correlation from pg_stats where tablename='goods';
+select attname, correlation from pg_stats where tablename='goods';
+
+
+-- полнотекстовый поиск
+select namegoods, to_tsvector(namegoods) from prepare.goods;
+select namegoods, to_tsvector(namegoods), to_tsvector(namegoods)@@to_tsquery('0402') from prepare.goods;
+
+alter table prepare.goods add column namegoods_lexeme tsvector;
+
+update prepare.goods
+	set namegoods_lexeme = to_tsvector(namegoods);
+
+explain (analyze) select * from prepare.goods where namegoods_lexeme @@ to_tsquery('0402');
+
+drop index if exists search_index_namegoods;
+CREATE INDEX search_index_namegoods ON prepare.goods USING GIN (namegoods_lexeme);
+analyze prepare.goods;
+
+explain (analyze) select * from prepare.goods where namegoods_lexeme @@ to_tsquery('0402');
+
+
+-- Частичный индекс
+
+explain  select * from prepare.goods where pins < 3;
+explain  select * from prepare.goods where pins > 60;
+
+create index pins_great2 on prepare.goods(pins) where pins > 2;
+
+explain  select * from prepare.goods where pins > 60;
+
+-- Составной индекс
+explain select * from prepare.goods
+	where namegoods='STW48NM60N' and description = 'микросхема';
+
+CREATE INDEX namegoods_descrip ON prepare.goods (namegoods, description);

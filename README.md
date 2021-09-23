@@ -128,19 +128,66 @@ DELETE FROM management.commercialofferorder
 ```
 ## <a id="6" />
 6. Индексы и план запросов. Indexes and Explain
-  - 1) создание индекса
-  ```
-  CREATE UNIQUE INDEX IdGoods ON prepare.Goods ( id );
-  CREATE UNIQUE INDEX NameGoods ON prepare.Goods ( NameGoods );
-  ```
-  Анализ запроса на 10000 записях
-  ```
-  explain (analyze)  select * from prepare.goods where namegoods = 'STTH6003CW';
-  ```
-  ```
-  Index Scan using namegoods on goods  (cost=0.29..8.30 rows=1 width=75) (actual time=0.026..0.027 rows=1 loops=1)
-    Index Cond: ((namegoods)::text = 'STTH6003CW'::text)
-      Planning Time: 0.118 ms
-      Execution Time: 0.047 ms
-  ```
-  - 2) создание индекса полнотекстового поискаа
+  - 1) Cоздание простого индекса
+    ```
+    CREATE UNIQUE INDEX IdGoods ON prepare.Goods ( id );
+    CREATE UNIQUE INDEX NameGoods ON prepare.Goods ( NameGoods );
+    ```
+    Анализ запроса на 10000 записях
+    ```
+    explain (analyze)  select * from prepare.goods where namegoods = 'STTH6003CW';
+    ```
+    ```
+    Index Scan using namegoods on goods  (cost=0.29..8.30 rows=1 width=75) (actual time=0.026..0.027 rows=1 loops=1)
+      Index Cond: ((namegoods)::text = 'STTH6003CW'::text)
+        Planning Time: 0.118 ms
+        Execution Time: 0.047 ms
+    ```
+    При оценке работы индекса выснилось, что на малом количестве записей он не подключается, было вначале 241 запись в таблице
+
+  - 2) Реализовать индекс полнотекстового поиска
+    Для полнотекстового поиска создается индекс типа GIN
+    ```
+    CREATE INDEX search_index_namegoods ON prepare.goods USING GIN (namegoods_lexeme);
+    ```
+    Анализ запроса на 10000 записях
+    ```
+    explain (analyze) select * from prepare.goods where namegoods_lexeme @@ to_tsquery('0402');
+    ```
+    ```
+    Bitmap Heap Scan on goods  (cost=12.67..168.89 rows=54 width=118) (actual time=0.040..0.055 rows=54 loops=1)
+    Recheck Cond: (namegoods_lexeme @@ to_tsquery('0402'::text))
+      Heap Blocks: exact=5
+        ->  Bitmap Index Scan on search_index_namegoods  (cost=0.00..12.66 rows=54 width=0) (actual time=0.033..0.033 rows=54 loops=1)
+        Index Cond: (namegoods_lexeme @@ to_tsquery('0402'::text))
+        Planning Time: 14.298 ms
+        Execution Time: 0.097 ms
+    ```
+    В этом поиске индекс не сильно уменьшил время запроса
+
+  - 3) Реализовать индекс на часть таблицы или индекс на поле с функцией
+    ```
+    create index pins_great2 on prepare.goods(pins) where pins > 2;
+    ```
+    ```
+    Bitmap Heap Scan on goods  (cost=4.33..26.00 rows=6 width=118)
+      Recheck Cond: (pins > 60)
+      ->  Bitmap Index Scan on pins_great2  (cost=0.00..4.33 rows=6 width=0)
+        Index Cond: (pins > 60)
+    ```
+
+    При результирующей выборки на большое к-во строк ~9000  индекс не подключается.
+    Когда условие сокращает результат то индекс подключается и сокращает время работы запроса
+
+  - 4) Создать индекс на несколько полей
+    ```
+    CREATE INDEX namegoods_descrip ON prepare.goods (namegoods, description);
+    ```
+    ```
+    Index Scan using namegoods_descrip on goods  (cost=0.29..8.30 rows=1 width=118)
+      Index Cond: (((namegoods)::text = 'STW48NM60N'::text) AND ((description)::text = 'микросхема'::text))
+    ```
+
+    Индекс сильно сокращает время выборки
+
+  - 5) Основное, с чем столкнулся это то, что индекс не подключается при малых записях в таблице и при большой выборке записей. Так же в поиске текстовых полях когда сравнение по оператору like индекс тоже не подключается
