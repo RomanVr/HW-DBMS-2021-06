@@ -209,12 +209,20 @@ DELETE FROM management.commercialofferorder
   ```
   4. Написать cte показывающее тоже самое.
   ```
-  with points_year as(
-	  select year_game, sum(points) as sum_points from public.statistic GROUP by year_game ORDER by year_game asc
+  WITH points_year AS(
+	  SELECT year_game, sum(points) as sum_points FROM public.statistic GROUP BY year_game ORDER BY year_game ASC
   )
-  select * from points_year;
+  SELECT * FROM points_year;
   ```
-  5. Используя функцию LAG вывести кол-во очков по всем игрокам за текущий код и за предыдущий. 
+  5. 
+  - Используя функцию LAG вывести кол-во очков по всем игрокам за текущий код и за предыдущий.
+  ```
+  select sum(points), year_game, LAG(sum(points)) OVER(order by year_game asc) as last_points
+  from public.statistic
+  group by year_game;
+  ```
+  - Вариант вывода количества очков каждого игрока за текущий и предыдущий год
+
   ```
   select player_name, points, year_game, LAG(points) OVER(partition by player_name order by year_game asc) as last_points
   from public.statistic;
