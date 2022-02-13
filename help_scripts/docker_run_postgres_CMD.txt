@@ -1,0 +1,4 @@
+Запуск с командной строки
+docker run --name habr-pg -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /var/lib/postgres:/var/lib/postgresql/data -d postgres:13
+
+

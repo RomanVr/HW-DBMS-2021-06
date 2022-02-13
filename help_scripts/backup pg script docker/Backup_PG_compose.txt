@@ -1,0 +1,36 @@
+docker-compose up -d
+● Ключ up - запустить конфигурацию, описанную в файле docker-compose.yml в текущей директории
+● Ключ -d - запустить в качестве демона (фоновый процесс), а не интерактивно
+
+
+Чтобы остановить docker compose, выполните:
+docker-compose down
+
+Для того чтобы просмотреть список томов Docker, воспользуйтесь следующей командой:
+docker volume ls
+
+Удалить том можно так:
+docker volume rm my_volume
+
+Добавить sudo в docker образ
+apt update && apt install sudo
+
+Создание кластера 
+sudo pg_createcluster 13 main2
+запуск кластера
+pg_ctlcluster 13 main2 start
+остановка кластера
+pg_ctlcluster 13 main2 stop
+Просмотр кластеров
+pg_lsclusters 
+
+чтобы сделать бэкап всего кластера:
+sudo -u postgres pg_dumpall > /home/1/backupall.sql
+Восстановление:
+sudo -u postgres psql < /home/1/backupall.sql
+
+сделать бэкап db backup
+sudo -u postgres pg_dump -d backup --create > /home/1/1.sql
+
+
+

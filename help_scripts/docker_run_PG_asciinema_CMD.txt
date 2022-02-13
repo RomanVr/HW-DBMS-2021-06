@@ -7,5 +7,6 @@ docker exec -it mypg bash
 psql -U postgres
 \l
 
+запуск конвертации asciinema
 docker run --rm -v $PWD:/data asciinema/asciicast2gif -s 2 -t solarized-dark demo.json demo.gif
 

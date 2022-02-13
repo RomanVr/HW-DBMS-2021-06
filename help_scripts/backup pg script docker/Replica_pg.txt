@@ -1,0 +1,66 @@
+файл postgresql.auto.conf, в котором лежат настройки кластера, которые перезаписывают дефолтные значения
+
+Создадим второй кластер на той же ВМ:
+sudo pg_createcluster -d /var/lib/postgresql/13/main2 13 main2
+
+Удалим оттуда файлы:
+sudo rm -rf /var/lib/postgresql/13/main2
+
+Сделаем бэкап нашей БД. Ключ -R создаст заготовку управляющего
+файла recovery.conf (запуск на вторичном сервере, если другой хост у мастера,
+то используем -h и IP-адрес):
+sudo pg_basebackup -p 5432 -R -D /var/lib/postgresql/13/main2
+
+Добавим параметр горячего резерва, чтобы реплика принимала запросы
+на чтение:
+sudo su postgres
+echo 'hot_standby = on' >> /var/lib/postgresql/13/main2/postgresql.auto.conf
+exit
+
+на реплике
+Имя сервера в primary_conninfo 
+application_name=replica4
+
+Стартуем кластер:
+sudo pg_ctlcluster 13 main2 start
+
+Проверим состояние репликации из main:
+SELECT * FROM pg_stat_replication \gx
+
+Чтобы перевести реплику в состояние мастера достаточно выполнить
+одну команду:
+sudo pg_ctlcluster 13 main2 promote
+
+
+Соответственно, для синхронной реплики выставляем следующие на мастере
+параметры, так как запросы к реплике возможны, но не приоритетны:
+● synchronous_commit = on
+● hot_standby_feedback = off - отключаем передачу сведений о
+транзакциях, которые выполняются на реплике
+● max_standby_streaming_delay = t - устанавливаем небольшое
+время задержки. Определяет, как долго должен ждать ведомый
+сервер, прежде чем отменять запросы, конфликтующие с
+очередными изменениями в WAL
+● И необходимо установить для параметра synchronous_standby_names непустое значение
+ALTER SYSTEM SET synchronous_standby_names TO  '*';
+
+ALTER SYSTEM SET synchronous_standby_names TO '1 (replica3, replica4)';
+рестарт конфигурации:
+SELECT pg_reload_conf();
+
+
+
+Для асинхронной реплики в зависимости от её задачи:
+Балансировка OLTP:
+● много коротких запросов
+● запросы на реплике должны отрабатываться
+● долгие запросы повлияют на мастер, но у нас их не должно быть
+Устанавливаем параметры:
+● synchronous_commit = off
+● hot_standby_feedback = on - включаем передачу сведений о
+транзакциях, которые выполняются на реплике
+● max_standby_streaming_delay = T - устанавливаем время
+побольше, так как это асинхронная реплика
+
+
+
