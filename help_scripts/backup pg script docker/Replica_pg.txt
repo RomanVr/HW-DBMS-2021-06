@@ -19,6 +19,7 @@ rm -rf /var/lib/postgresql/13/replica
 pg_basebackup -p 5433 -R -D /var/lib/postgresql/13/replica
 
 echo 'hot_standby = on' >> /var/lib/postgresql/13/replica/postgresql.auto.conf
+echo 'recovery_min_apply_delay = 5min' >> /var/lib/postgresql/13/replica/postgresql.auto.conf
 
 pg_ctlcluster 13 replica start
 
@@ -49,6 +50,9 @@ SELECT * FROM maintable;
 pg_ctlcluster 13 replica promote
 
 -----------------------------------------
+
+изменения будут применяться через восемь часов
+recovery_min_apply_delay = '8h'
 
 Создадим второй кластер на той же ВМ:
 sudo pg_createcluster -d /var/lib/postgresql/13/main2 13 main2

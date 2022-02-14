@@ -4,28 +4,30 @@ sudo pg_ctlcluster 13 main2 promote
 
 ALTER SYSTEM SET wal_level TO logical;
 SELECT pg_reload_conf();
+pg_ctlcluster 13 main1 restart
 
-Добавить пароь на юзера postgres
+Добавить пароль на юзера postgres
 ALTER USER postgres PASSWORD 'postgres';
 
 Отменить синхронизаццию
 ALTER SYSTEM SET synchronous_standby_names TO  '';
 
 Создать на Slave кластере таблицу логической репликации:
-create database logical;
-create table t (t int);
-insert into t values(10);
-select * from t;
+CREATE DATABASE logical;
+\c logical
+CREATE TABLE mainlog (t int);
+INSERT INTO mainlog VALUES(10);
+SELECT * FROM mainlog;
 
 На мастере создаем публикацию
-CREATE PUBLICATION test_pub FOR TABLE test;
+CREATE PUBLICATION test_pub FOR TABLE mainlog;
 посмотреть на публикации:
-select * from pg_publication;
-select * from pg_publication_tables;
+SELECT * FROM pg_publication;
+SELECT * FROM pg_publication_tables;
 
 На slave создаем подписку
 CREATE SUBSCRIPTION test_sub 
-CONNECTION 'host=localhost port=5432 user=postgres password=otus$123 dbname=postgres' 
+CONNECTION 'host=localhost port=5433 user=postgres password=postgres dbname=logical' 
 PUBLICATION test_pub WITH (copy_data = false);
 
 смотрим изменения
