@@ -8,10 +8,13 @@ psql -U postgres
 \l
 
 запуск конвертации asciinema
-docker run --rm -v $PWD:/data asciinema/asciicast2gif -s 2 -t solarized-dark demo.json demo.gif
+docker run --rm -v $PWD:/data asciinema/asciicast2gif -s 2 -t solarized-dark pgReplica.json pgReplica.gif
 
+docker run --rm -v $PWD:/data asciinema/asciicast2gif -s 2 -t solarized-dark pgLogical.json pgLogical.gif
 
-asciinema rec -i 2 pgReplica.json
+asciinema rec -i 1.5 pgReplica.json
+
+asciinema rec -i 1.5 pgLogical.json
+
 asciinema rec -i 2 --append pgReplica.json
 asciinema play pgReplica.json
-

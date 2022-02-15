@@ -2,12 +2,15 @@
 одну команду:
 sudo pg_ctlcluster 13 main2 promote
 
+echo 'recovery_min_apply_delay = 0' >> /var/lib/postgresql/13/replica/postgresql.auto.conf
+
 ALTER SYSTEM SET wal_level TO logical;
-SELECT pg_reload_conf();
-pg_ctlcluster 13 main1 restart
 
 Добавить пароль на юзера postgres
 ALTER USER postgres PASSWORD 'postgres';
+
+SELECT pg_reload_conf();
+pg_ctlcluster 13 main1 restart
 
 Отменить синхронизаццию
 ALTER SYSTEM SET synchronous_standby_names TO  '';
@@ -26,10 +29,9 @@ SELECT * FROM pg_publication;
 SELECT * FROM pg_publication_tables;
 
 На slave создаем подписку
-CREATE SUBSCRIPTION test_sub 
-CONNECTION 'host=localhost port=5433 user=postgres password=postgres dbname=logical' 
+CREATE SUBSCRIPTION test_sub
+CONNECTION 'host=localhost port=5433 user=postgres password=postgres dbname=logical'
 PUBLICATION test_pub WITH (copy_data = false);
 
 смотрим изменения
 select * from t;
-
