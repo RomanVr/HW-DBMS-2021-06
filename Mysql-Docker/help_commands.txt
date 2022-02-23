@@ -1,4 +1,27 @@
+
+rm -r /var/lib/mysql/orderManSys/
+
+mysql -u root
+
+#Выбор базы данных
+use orderManSys;
+
 # Просмотр таблиц
 show tables;
 
-#
+SELECT * FROM Organization;
+
+#Описание таблицы
+describe People;
+
+show table status;
+
+#Просмотр ограничений в таблице
+select COLUMN_NAME, CONSTRAINT_NAME, REFERENCED_COLUMN_NAME, REFERENCED_TABLE_NAME
+  from information_schema.KEY_COLUMN_USAGE
+  where TABLE_NAME = 'People';
+
+SHOW FULL COLUMNS FROM People;
+
+
+
