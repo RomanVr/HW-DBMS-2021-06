@@ -11,3 +11,14 @@ CREATE TABLE IF NOT EXISTS Organization
  TypeOrganization varchar(250) NOT NULL DEFAULT '',
  LastUpdate       timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+
+
+-- INSERT **************************************
+
+INSERT INTO Organization(
+	nameorganization, location, typeorganization)
+	VALUES ('', '', ''),
+  ('РНИИРС', 'г. Ростов-на-Дону', 'заказчик'),
+  ('Алмаз-СП', 'г. Москва', 'исполнитель'),
+  ('Avnet', 'Europe', 'производитель');
