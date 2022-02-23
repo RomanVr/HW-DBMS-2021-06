@@ -10,3 +10,6 @@ docker exec -it mypgrun psql -U postgres
 
 #В этом варианте не подключается psql
 docker run --name mypgrun -p 5432:5432 -it mypg1 /bin/bash
+
+#Удалить образ
+docker rmi Image
