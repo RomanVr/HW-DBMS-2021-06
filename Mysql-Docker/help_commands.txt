@@ -1,10 +1,12 @@
 
 rm -r /var/lib/mysql/orderManSys/
 
-mysql -u root
+docker exec -it otusdb mysql -u root orderManSys
 
 #Выбор базы данных
 use orderManSys;
+
+SHOW CREATE DATABASE orderManSys;
 
 # Просмотр таблиц
 show tables;
