@@ -7,7 +7,7 @@ USE orderManSys;
 
 CREATE TABLE IF NOT EXISTS Organization
 (
- id             int PRIMARY KEY AUTO_INCREMENT,
+ id               int PRIMARY KEY AUTO_INCREMENT,
  NameOrganization varchar(250) UNIQUE NOT NULL DEFAULT '',
  Location         varchar(250) NOT NULL DEFAULT '',
  TypeOrganization varchar(250) NOT NULL DEFAULT '',
@@ -22,11 +22,12 @@ CREATE TABLE IF NOT EXISTS People
  firstName       varchar(250) NOT NULL DEFAULT '',
  lastName        varchar(250) NOT NULL DEFAULT '',
  patronymic      varchar(250) NOT NULL DEFAULT '',
- age             int NOT NULL DEFAULT 0,
+ ofBirth         date NOT NULL,
+ gender          varchar(250) NOT NULL DEFAULT '',
  tel_mobile      varchar(250) NOT NULL DEFAULT '',
  tel_work        varchar(250) NOT NULL DEFAULT '',
  e_mail          varchar(250) NOT NULL DEFAULT '',
- departament     varchar(250) NOT NULL DEFAULT '',
+ department      varchar(250) NOT NULL DEFAULT '',
  position        varchar(250) NOT NULL DEFAULT '',
  chief_id        int NOT NULL DEFAULT 1,
  organization_id int NOT NULL DEFAULT 1,
@@ -128,23 +129,23 @@ CREATE TABLE IF NOT EXISTS Invoice
 CREATE TABLE IF NOT EXISTS CommercialOfferGoods
 (
  id                  bigint PRIMARY KEY AUTO_INCREMENT,
- GoodsManufaction_id bigint NOT NULL,
+ GoodsManufacture_id bigint NOT NULL,
  QuantityPurchase    decimal(20, 6) NOT NULL,
  PricePurchase       decimal(20, 6) NOT NULL,
  Currency            varchar(250) NOT NULL,
  PriceSale           decimal(20, 6) NOT NULL,
  DeliveryTime        int NOT NULL,
  MinQuota            boolean NOT NULL,
- Manufaction_id      int NOT NULL,
+ Manufacture_id      int NOT NULL,
  Supplier_id         int NOT NULL,
  Manager_id          int NOT NULL,
  Description         text,
  Invoice_id          bigint NOT NULL,
- OrderSalor          varchar(250) NOT NULL DEFAULT '',
+ OrderSailor         varchar(250) NOT NULL DEFAULT '',
  LastUpdate          timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
- CONSTRAINT FK_193 FOREIGN KEY ( GoodsManufaction_id ) REFERENCES Goods ( id ),
- CONSTRAINT FK_196 FOREIGN KEY ( Manufaction_id ) REFERENCES Organization ( id ),
+ CONSTRAINT FK_193 FOREIGN KEY ( GoodsManufacture_id ) REFERENCES Goods ( id ),
+ CONSTRAINT FK_196 FOREIGN KEY ( Manufacture_id ) REFERENCES Organization ( id ),
  CONSTRAINT FK_199 FOREIGN KEY ( Supplier_id ) REFERENCES Organization ( id ),
  CONSTRAINT FK_202 FOREIGN KEY ( Manager_id ) REFERENCES People ( id ),
  CONSTRAINT FK_245 FOREIGN KEY ( Invoice_id ) REFERENCES Invoice ( id ),
@@ -197,11 +198,11 @@ CREATE TABLE IF NOT EXISTS Stock
  DeliveryRelation_Id bigint NOT NULL,
  Quantity            decimal(20, 6) NOT NULL,
  DateRevise          date NOT NULL,
- WarehouseWoorker_Id int NOT NULL,
+ WarehouseWorker_Id  int NOT NULL,
  LastUpdate          timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_266 FOREIGN KEY ( DeliveryRelation_id ) REFERENCES DeliveryRelation ( id ),
- CONSTRAINT FK_271 FOREIGN KEY ( WarehouseWoorker_id ) REFERENCES People ( id )
+ CONSTRAINT FK_271 FOREIGN KEY ( WarehouseWorker_id ) REFERENCES People ( id )
 )
 COMMENT = 'Таблица склада содержит данные поступления товаров с определенной поставки, количество может быть (ошибочно) меньше чем отправляли.';
 
@@ -213,13 +214,13 @@ CREATE TABLE IF NOT EXISTS StockSet
  Stock_Id            bigint NOT NULL,
  QuantitySet         decimal(20, 6) NOT NULL,
  DateSet             date NOT NULL,
- WarehouseWoorker_Id int NOT NULL,
+ WarehouseWorker_Id  int NOT NULL,
  DateShipment        date DEFAULT '0001-01-01',
  Assembly_id         bigint DEFAULT 0,
  LastUpdate          timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_286 FOREIGN KEY ( Stock_Id ) REFERENCES Stock ( id ),
- CONSTRAINT FK_293 FOREIGN KEY ( WarehouseWoorker_Id ) REFERENCES People ( id ),
+ CONSTRAINT FK_293 FOREIGN KEY ( WarehouseWorker_Id ) REFERENCES People ( id ),
  CONSTRAINT FK_300 FOREIGN KEY ( Assembly_Id ) REFERENCES CommercialOfferAssembly ( id )
 );
 
@@ -257,7 +258,7 @@ CREATE TABLE IF NOT EXISTS TableSupplyModule
  DateOfCompletion  date NULL DEFAULT '0001-01-01',
  Assembly_id       bigint NOT NULL,
  Quantity          decimal(20, 6) NOT NULL,
- Descryption       text NULL,
+ Description       text NULL,
  DateShipmentOrder date NULL DEFAULT '0001-01-01',
  LastUpdate        timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -308,7 +309,7 @@ INSERT INTO Organization(
 
 INSERT INTO People(
 	firstname, lastname, patronymic, age, tel_mobile,
-	tel_work, e_mail, departament, position, organization_id)
+	tel_work, e_mail, department, position, organization_id)
 	VALUES
       ('Василий', 'Лозовой', 'Николаевич', 35, '+7(918)5255518',
 			'+7(863)2555253','tatian@yandex.ru', 'отдел НКО', 'Начальник', 2),
