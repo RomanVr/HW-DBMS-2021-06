@@ -24,13 +24,16 @@ CREATE TABLE IF NOT EXISTS People
  patronymic      varchar(250) NOT NULL DEFAULT '',
  ofBirth         date NOT NULL,
  gender          varchar(250) NOT NULL DEFAULT '',
- tel_mobile      varchar(250) NOT NULL DEFAULT '',
- tel_work        varchar(250) NOT NULL DEFAULT '',
- e_mail          varchar(250) NOT NULL DEFAULT '',
  department      varchar(250) NOT NULL DEFAULT '',
  position        varchar(250) NOT NULL DEFAULT '',
  chief_id        int NOT NULL DEFAULT 1,
  organization_id int NOT NULL DEFAULT 1,
+ attributes      JSON NOT NULL,
+
+-- tel_mobile      varchar(250) NOT NULL DEFAULT '',
+-- tel_work        varchar(250) NOT NULL DEFAULT '',
+-- e_mail          varchar(250) NOT NULL DEFAULT '',
+
  lastUpdate      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_117 FOREIGN KEY ( chief_id ) REFERENCES People ( id ),
@@ -308,15 +311,13 @@ INSERT INTO Organization(
   ('Avnet', 'Europe', 'производитель');
 
 INSERT INTO People(
-	firstname, lastname, patronymic, age, tel_mobile,
-	tel_work, e_mail, department, position, organization_id)
+	firstname, lastname, patronymic, age, attributes, department, position, organization_id)
 	VALUES
-      ('Василий', 'Лозовой', 'Николаевич', 35, '+7(918)5255518',
-			'+7(863)2555253','tatian@yandex.ru', 'отдел НКО', 'Начальник', 2),
-      ('Роман', 'Воробьев', 'Николаевич', 43, '+7(916)6666668',
-			'+7(495)2216921','romakf99@yandex.ru', 'Pcb', 'Начальник', 3),
-      ('Alex', '', '', 36, '',
-			'','alex@gmail.com', 'sales', 'manager', 4);
+      ('Василий', 'Лозовой', 'Николаевич', 35, '{"tel_mobile": "+7(918)5255518",
+			"tel_work": "+7(863)2555253", "e_mail": "tatian@yandex.ru"}', 'отдел НКО', 'Начальник', 2),
+      ('Роман', 'Воробьев', 'Николаевич', 43, '{"tel_mobile": "+7(916)6666668",
+			"tel_work": "+7(495)2216921", "e_mail": "romakf99@yandex.ru"}', 'Pcb', 'Начальник', 3),
+      ('Alex', '', '', 36, '{"e_mail": "alex@gmail.com"}', 'sales', 'manager', 4)
 
 INSERT INTO Orders(
 	nameorder, datacreate, customer_id, deliveryaddress)
