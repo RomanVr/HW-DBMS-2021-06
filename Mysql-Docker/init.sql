@@ -22,27 +22,24 @@ CREATE TABLE IF NOT EXISTS People
  firstName       varchar(250) NOT NULL DEFAULT '',
  lastName        varchar(250) NOT NULL DEFAULT '',
  patronymic      varchar(250) NOT NULL DEFAULT '',
- ofBirth         date NOT NULL,
+ ofBirth         	date NOT NULL,
  gender          varchar(250) NOT NULL DEFAULT '',
  department      varchar(250) NOT NULL DEFAULT '',
  position        varchar(250) NOT NULL DEFAULT '',
  chief_id        int NOT NULL DEFAULT 1,
  organization_id int NOT NULL DEFAULT 1,
  attributes      JSON NOT NULL,
-
--- tel_mobile      varchar(250) NOT NULL DEFAULT '',
--- tel_work        varchar(250) NOT NULL DEFAULT '',
--- e_mail          varchar(250) NOT NULL DEFAULT '',
-
  lastUpdate      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_117 FOREIGN KEY ( chief_id ) REFERENCES People ( id ),
  CONSTRAINT FK_131 FOREIGN KEY ( organization_id ) REFERENCES Organization ( id ),
- CONSTRAINT check_Age CHECK ( age >=0 AND age < 100 ),
  CONSTRAINT unique_fullname UNIQUE (firstName, lastName, patronymic)
 )
 COMMENT = 'Таблица содержащая данные Людей участвующих в процессе';
 
+-- tel_mobile      varchar(250) NOT NULL DEFAULT '',
+-- tel_work        varchar(250) NOT NULL DEFAULT '',
+-- e_mail          varchar(250) NOT NULL DEFAULT '',
 -- 3 ************************************** management.Order
 
 CREATE TABLE IF NOT EXISTS Orders
@@ -311,13 +308,14 @@ INSERT INTO Organization(
   ('Avnet', 'Europe', 'производитель');
 
 INSERT INTO People(
-	firstname, lastname, patronymic, age, attributes, department, position, organization_id)
+	firstname, lastname, patronymic, ofBirth, attributes, department, position, organization_id)
 	VALUES
-      ('Василий', 'Лозовой', 'Николаевич', 35, '{"tel_mobile": "+7(918)5255518",
+      ('', '', '', '1900-01-01', '{}', '', '', 1),
+      ('Василий', 'Лозовой', 'Николаевич', '1982-04-08', '{"tel_mobile": "+7(918)5255518",
 			"tel_work": "+7(863)2555253", "e_mail": "tatian@yandex.ru"}', 'отдел НКО', 'Начальник', 2),
-      ('Роман', 'Воробьев', 'Николаевич', 43, '{"tel_mobile": "+7(916)6666668",
+      ('Роман', 'Воробьев', 'Николаевич', '1978-06-22', '{"tel_mobile": "+7(916)6666668",
 			"tel_work": "+7(495)2216921", "e_mail": "romakf99@yandex.ru"}', 'Pcb', 'Начальник', 3),
-      ('Alex', '', '', 36, '{"e_mail": "alex@gmail.com"}', 'sales', 'manager', 4)
+      ('Alex', '', '', '1986-05-09', '{"e_mail": "alex@gmail.com"}', 'sales', 'manager', 4);
 
 INSERT INTO Orders(
 	nameorder, datacreate, customer_id, deliveryaddress)
