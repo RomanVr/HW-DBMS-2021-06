@@ -320,3 +320,16 @@ INSERT INTO People(
 INSERT INTO Orders(
 	nameorder, datacreate, customer_id, deliveryaddress)
 	VALUES ('1 order', now(), 2, 'Ростов-на-Дону');
+ 
+INSERT INTO TypeAssembly (nameassembly) 
+    VALUES ('SMT'), ('DIP'), ('Сборка');
+
+INSERT INTO Module(
+	namemodule, constructor_id)
+	VALUES
+	('468181.666', 2),
+	('468352.070', 2),
+	('468716.001', 2),
+	('468214.100', 2),
+	('436637.043', 2);
+
