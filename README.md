@@ -284,3 +284,7 @@ DELETE FROM management.commercialofferorder
   1. Напишите запрос по своей базе с inner join
   2. Напишите запрос по своей базе с left join
   3. Напишите 5 запросов с WHERE с использованием разных операторов, опишите для чего вам в проекте нужна такая выборка данных
+  - Решение:
+  - [Выбор спецификации конкретного модуля](./Mysql-Docker/scripts/select_inner.sql)
+  - [Выбор сводной коммерческого предложения все хкомпонентов в одном заказе](./Mysql-Docker/scripts/select_left_join.sql)
+  - [Запросы с WHERE](./Mysql-Docker/scripts/select_where.sql)

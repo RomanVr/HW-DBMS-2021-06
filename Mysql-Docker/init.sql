@@ -233,6 +233,7 @@ CREATE TABLE IF NOT EXISTS CommercialOfferOrder
  GoodsCustomer_id        bigint NOT NULL,
  QuantitySpecification   decimal(20, 6) NOT NULL,
  unit                    varchar(250) NOT NULL,
+ ComOfferGoods_id		 bigint NOT NULL DEFAULT 0,
  NameApproval            boolean NULL DEFAULT false,
  DetailApproval          text NULL,
  Purchase                boolean NULL DEFAULT false,
@@ -243,6 +244,7 @@ CREATE TABLE IF NOT EXISTS CommercialOfferOrder
  LastUpdate              timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_134 FOREIGN KEY ( ManagerPurchase_id ) REFERENCES Organization ( id ),
+ CONSTRAINT FK_501 FOREIGN KEY ( ComOfferGoods_id ) REFERENCES CommercialOfferGoods ( id ),
  CONSTRAINT FK_296 FOREIGN KEY ( StockSet_id ) REFERENCES StockSet ( id ),
  CONSTRAINT FK_84 FOREIGN KEY ( GoodsCustomer_id ) REFERENCES Goods ( id ),
  CONSTRAINT FK_90 FOREIGN KEY ( OrderSp_id ) REFERENCES OrderSpecification ( id )
@@ -275,10 +277,10 @@ CREATE TABLE IF NOT EXISTS ModuleSpecification
  Module_Id           int NOT NULL,
  Quantity            decimal(20, 6) NOT NULL,
  unit                varchar(250) NOT NULL,
- NumberCustomer      int NOT NULL,
- NumberSpecification int NULL DEFAULT 0,
- Position            text NULL,
- Note                text NULL,
+ NumberCustomer      int NOT NULL DEFAULT 0,
+ NumberSpecification int NOT NULL DEFAULT 0,
+ Position            text,
+ Note                text,
  LastUpdate          timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_41 FOREIGN KEY ( Goods_Id ) REFERENCES Goods ( id ),
@@ -333,3 +335,20 @@ INSERT INTO Module(
 	('468214.100', 2),
 	('436637.043', 2);
 
+INSERT INTO Invoice(
+	nameinvoice, datacreate)
+	VALUES ('Av001', '2020-05-06');
+
+SET GLOBAL local_infile=1;
+
+SHOW GLOBAL VARIABLES LIKE 'local_infile';
+SHOW GLOBAL VARIABLES LIKE 'secure_file_priv';
+
+SELECT @@GLOBAL.secure_file_priv;
+
+
+-- LOAD DATA LOCAL INFILE '/var/lib/mysql-files/data_for_copy/copy_goods.csv'
+-- 	INTO TABLE Goods
+--     FIELDS TERMINATED BY '\t'
+--     LINES TERMINATED BY '\n'
+--     (NameGoods, Pins, TypeAssembly_id, Description);ModuleSpecification
