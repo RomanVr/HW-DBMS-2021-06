@@ -1,0 +1,5 @@
+Создание файла восстановления
+mysqldump -u root -p orderManSys > backup1.sql
+
+Восстановление, предварительно создать БД orderManSys
+mysql -u root -p orderManSys < backup1.sql

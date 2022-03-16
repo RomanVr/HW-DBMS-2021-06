@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS People
  firstName       varchar(250) NOT NULL DEFAULT '',
  lastName        varchar(250) NOT NULL DEFAULT '',
  patronymic      varchar(250) NOT NULL DEFAULT '',
- ofBirth         	date NOT NULL,
+ ofBirth         date NOT NULL,
  gender          varchar(250) NOT NULL DEFAULT '',
  department      varchar(250) NOT NULL DEFAULT '',
  position        varchar(250) NOT NULL DEFAULT '',
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS Goods
  NameGoods       varchar(250) NOT NULL,
  Pins            int NOT NULL,
  TypeAssembly_id int NOT NULL,
- Description     varchar(250) NOT NULL,
+ Description     varchar(250) NOT NULL DEFAULT '',
  LastUpdate      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_34 FOREIGN KEY ( TypeAssembly_id ) REFERENCES TypeAssembly ( id ),
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS CommercialOfferGoods
  Supplier_id         int NOT NULL,
  Manager_id          int NOT NULL,
  Description         text,
- Invoice_id          bigint NOT NULL,
+ Invoice_id          bigint NOT NULL DEFAULT 1,
  OrderSailor         varchar(250) NOT NULL DEFAULT '',
  LastUpdate          timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -216,12 +216,12 @@ CREATE TABLE IF NOT EXISTS StockSet
  DateSet             date NOT NULL,
  WarehouseWorker_Id  int NOT NULL,
  DateShipment        date DEFAULT '0001-01-01',
- Assembly_id         bigint DEFAULT 0,
+ Assembly_id         bigint NOT NULL DEFAULT 1,
  LastUpdate          timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_286 FOREIGN KEY ( Stock_Id ) REFERENCES Stock ( id ),
  CONSTRAINT FK_293 FOREIGN KEY ( WarehouseWorker_Id ) REFERENCES People ( id ),
- CONSTRAINT FK_300 FOREIGN KEY ( Assembly_Id ) REFERENCES CommercialOfferAssembly ( id )
+ CONSTRAINT FK_300 FOREIGN KEY ( Assembly_Id ) REFERENCES OrderSpecification ( id )
 );
 
 -- 14 ************************************** management.CommercialOfferOrder
@@ -233,13 +233,13 @@ CREATE TABLE IF NOT EXISTS CommercialOfferOrder
  GoodsCustomer_id        bigint NOT NULL,
  QuantitySpecification   decimal(20, 6) NOT NULL,
  unit                    varchar(250) NOT NULL,
- ComOfferGoods_id		 bigint NOT NULL DEFAULT 0,
+ ComOfferGoods_id		 bigint NOT NULL DEFAULT 1,
  NameApproval            boolean NULL DEFAULT false,
  DetailApproval          text NULL,
  Purchase                boolean NULL DEFAULT false,
  DatePurchase            date NULL DEFAULT '0001-01-01',
- ManagerPurchase_id      int NULL DEFAULT 0,
- StockSet_id             bigint NULL DEFAULT 0,
+ ManagerPurchase_id      int NULL DEFAULT 1,
+ StockSet_id             bigint NULL DEFAULT 1,
  DateShipmentOrder       date NULL DEFAULT '0001-01-01',
  LastUpdate              timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -289,16 +289,16 @@ CREATE TABLE IF NOT EXISTS ModuleSpecification
 
 -- 17 ************************************** purchase.PurchaseRelation
 
-CREATE TABLE IF NOT EXISTS PurchaseRelation
-(
- id                bigint PRIMARY KEY AUTO_INCREMENT,
- CommOfferOrder_id bigint NOT NULL,
- CommOfferGoods_id bigint NOT NULL,
- LastUpdate        timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+-- CREATE TABLE IF NOT EXISTS PurchaseRelation
+-- (
+--  id                bigint PRIMARY KEY AUTO_INCREMENT,
+--  CommOfferOrder_id bigint NOT NULL,
+--  CommOfferGoods_id bigint NOT NULL,
+--  LastUpdate        timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
- CONSTRAINT FK_239 FOREIGN KEY ( CommOfferOrder_id ) REFERENCES CommercialOfferOrder ( id ),
- CONSTRAINT FK_248 FOREIGN KEY ( CommOfferGoods_id ) REFERENCES CommercialOfferGoods ( id )
-);
+--  CONSTRAINT FK_239 FOREIGN KEY ( CommOfferOrder_id ) REFERENCES CommercialOfferOrder ( id ),
+--  CONSTRAINT FK_248 FOREIGN KEY ( CommOfferGoods_id ) REFERENCES CommercialOfferGoods ( id )
+-- );
 
 -- INSERT **************************************
 
@@ -321,11 +321,13 @@ INSERT INTO People(
 
 INSERT INTO Orders(
 	nameorder, datacreate, customer_id, deliveryaddress)
-	VALUES ('1 order', now(), 2, 'Ростов-на-Дону');
- 
-INSERT INTO TypeAssembly (nameassembly) 
-    VALUES ('SMT'), ('DIP'), ('Сборка');
+	VALUES
+		('', now(), 1, ''),
+		('1 order', now(), 2, 'Ростов-на-Дону');
 
+INSERT INTO TypeAssembly (nameassembly)
+    VALUES (''), ('SMT'), ('DIP'), ('Сборка');
+    
 INSERT INTO Module(
 	namemodule, constructor_id)
 	VALUES
@@ -335,9 +337,38 @@ INSERT INTO Module(
 	('468214.100', 2),
 	('436637.043', 2);
 
+INSERT INTO `orderManSys`.`Goods` (`NameGoods`, `Pins`, `TypeAssembly_id`) 
+	VALUES ('\'\'', 0, '1');
+    
 INSERT INTO Invoice(
 	nameinvoice, datacreate)
-	VALUES ('Av001', '2020-05-06');
+	VALUES 
+    ('','0001-01-01'),
+    ('Av001', '2020-05-06');
+
+INSERT INTO `orderManSys`.`CommercialOfferGoods` 
+	(`GoodsManufacture_id`, `QuantityPurchase`, `PricePurchase`, `Currency`, `PriceSale`, `DeliveryTime`, `MinQuota`, `Manufacture_id`, `Supplier_id`, `Manager_id`, `Description`)
+    VALUES ('1', '0', '0', '\'\'', '0', '0', '0', '1', '1', '1', '\'\'');
+
+INSERT INTO `orderManSys`.`DeliveryRelation` 
+	(`CommOfferGoods_id`, `Quantity`, `NameDelivery`, `DateShipment`, `DateDelivery`, `Destination`) 
+    VALUES ('1', '0', '\'\'', '0001-01-01', '0001-01-01', '\'\'');
+
+INSERT INTO `orderManSys`.`Stock` 
+	(`DeliveryRelation_Id`, `Quantity`, `DateRevise`, `WarehouseWorker_Id`) 
+    VALUES ('1', '0', '2022-03-15', '1');
+
+INSERT INTO OrderSpecification(
+	Order_id, Module_id, Quantity, Assembly)
+	VALUES
+    (1, 1, 0, 0),
+    (2, 1, 12, 1),
+    (2, 2, 5, 1),
+    (2, 3, 23, 1);
+    
+INSERT INTO `orderManSys`.`StockSet` 
+	(`Stock_Id`, `QuantitySet`, `DateSet`, `WarehouseWorker_Id`, `DateShipment`, `Assembly_id`) VALUES 
+    ('1', '0', '0001-01-01', '1', '0001-01-01', '1');
 
 SET GLOBAL local_infile=1;
 
@@ -346,9 +377,24 @@ SHOW GLOBAL VARIABLES LIKE 'secure_file_priv';
 
 SELECT @@GLOBAL.secure_file_priv;
 
+LOAD DATA INFILE '/var/lib/mysql-files/data_for_copy/copy_goods.csv'
+	INTO TABLE `orderManSys`.`Goods`
+    FIELDS TERMINATED BY '\t'
+    LINES TERMINATED BY '\n'
+    (NameGoods, Pins, TypeAssembly_id, Description);
 
--- LOAD DATA LOCAL INFILE '/var/lib/mysql-files/data_for_copy/copy_goods.csv'
--- 	INTO TABLE Goods
---     FIELDS TERMINATED BY '\t'
---     LINES TERMINATED BY '\n'
---     (NameGoods, Pins, TypeAssembly_id, Description);ModuleSpecification
+LOAD DATA INFILE '/var/lib/mysql-files/data_for_copy/copy_module_spec.csv'
+	INTO TABLE `orderManSys`.`ModuleSpecification`
+    FIELDS TERMINATED BY '\t'
+    LINES TERMINATED BY '\n'
+    (Goods_Id, Module_Id, Quantity, unit, NumberCustomer);
+    
+LOAD DATA INFILE '/var/lib/mysql-files/data_for_copy/commercial_offer_goods.csv'
+	INTO TABLE `orderManSys`.`CommercialOfferGoods`
+    FIELDS TERMINATED BY '\t'
+    LINES TERMINATED BY '\n'
+    IGNORE 1 LINES
+    (GoodsManufacture_id,QuantityPurchase,PricePurchase,
+	 Currency,PriceSale,DeliveryTime,MinQuota,Manufacture_id,
+     Supplier_id,Manager_id,Invoice_id);
+    
