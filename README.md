@@ -297,3 +297,5 @@ DELETE FROM management.commercialofferorder
     - LOAD DATA
     - mysqlimport
     - *) реализовать загрузку через fifo
+  - Решение:
+  1. [Хранимая процедура для изменения данных в спецификации модуля и последующее изменение заказа компонентов](Mysql-Docker/scripts/procedureUpdateOrder.sql)
