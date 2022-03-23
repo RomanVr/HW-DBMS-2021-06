@@ -300,4 +300,4 @@ DELETE FROM management.commercialofferorder
 
   - Решение:
   1. [Хранимая процедура для изменения данных в спецификации модуля и последующее изменение заказа компонентов](./Mysql-Docker/scripts/procedureUpdateOrder.sql)
-  - [Скрипт создание таблицы и загрузки в нее данных](./Mysql-Docker/load_csv/create_and_load_table.sql)
+  2. [Скрипт создание таблицы и загрузки в нее данных](./Mysql-Docker/load_csv/create_and_load_table.sql)
