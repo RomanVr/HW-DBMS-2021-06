@@ -306,7 +306,36 @@ DELETE FROM management.commercialofferorder
 ## <a id="13" /> 13. Отчетная выборка
   - Задание: Научиться создавать отчетную выборку, предоставить результат
 группировки с ипользованием CASE, HAVING, ROLLUP, GROUPING():
-  1. Для магазина к предыдущему списку продуктов добавить максимальную и минимальную цену и кол-во предложений;
+  1. К списку продуктов добавить максимальную и минимальную цену и кол-во предложений;
   2. Сделать выборку, показывающую самый дорогой и самый дешевый товар в каждой категории;
   3. Сделать rollup с количеством товаров по категориям;
   - Решение:
+  1. Запрос с группировкой по валюте с минимальной, максимальной ценой и количеству товаров
+  ```
+SELECT count(g.NameGoods) as count, sum(co.PricePurchase*co.QuantityPurchase) as sum, co.Currency, max(co.PricePurchase) as max_price, min(co.PricePurchase) min_price
+	FROM CommercialOfferGoods as co
+	  INNER JOIN Goods as g on g.id = co.GoodsManufacture_id
+    WHERE g.id <> 1
+    GROUP BY co.Currency
+    ORDER BY count;
+  ```
+  2. Запрос с группировкой по типу товара минимальной, максимальной ценой и количеством в каждой группе
+  ```
+  SELECT g.Description as type, min(co.PricePurchase) as min_price, max(co.PricePurchase) as max_price, count(g.NameGoods) as count
+	FROM CommercialOfferGoods as co
+	  INNER JOIN Goods as g on g.id = co.GoodsManufacture_id
+    WHERE g.id <> 1
+    GROUP BY g.Description
+    ORDER BY count;
+  ```
+  3. Запрос с rollup группировкой по типам товара
+  ```
+  SELECT
+	IF(GROUPING(g.Description), 'All types', g.Description) as type,
+    count(g.NameGoods) as count
+	FROM CommercialOfferGoods as co
+	  INNER JOIN Goods as g on g.id = co.GoodsManufacture_id
+    WHERE g.id <> 1
+    GROUP BY g.Description WITH ROLLUP
+    ORDER BY count;
+  ```
