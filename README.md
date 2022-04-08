@@ -346,3 +346,8 @@ SELECT count(g.NameGoods) as count, sum(co.PricePurchase*co.QuantityPurchase) as
   2. Анализируем свой проект - добавляем или обновляем индексы.
   3. В README пропишите какие индексы были изменены или добавлены, explain и результаты выборки без индекса и с индексом.;
   - Решение:
+  2. Доблены индексы на ForeignKey и индексы на поля содержащие имена в текстовом виде, для таблицы People сделан составной индекс
+  ```
+  INDEX fullName (FirstName, LastName, Patronymic)
+  ```
+  3.

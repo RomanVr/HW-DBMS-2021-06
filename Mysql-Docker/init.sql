@@ -8,10 +8,12 @@ USE orderManSys;
 CREATE TABLE IF NOT EXISTS Organization
 (
  id               int PRIMARY KEY AUTO_INCREMENT,
- NameOrganization varchar(250) UNIQUE NOT NULL DEFAULT '',
+ NameOrganization varchar(250) NOT NULL DEFAULT '',
  Location         varchar(250) NOT NULL DEFAULT '',
  TypeOrganization varchar(250) NOT NULL DEFAULT '',
- LastUpdate       timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+ LastUpdate       timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ 
+ UNIQUE INDEX IdxNameOrg (NameOrganization)
 );
 
 -- 2 ************************************** public.People
@@ -33,13 +35,13 @@ CREATE TABLE IF NOT EXISTS People
 
  CONSTRAINT FK_117 FOREIGN KEY ( chief_id ) REFERENCES People ( id ),
  CONSTRAINT FK_131 FOREIGN KEY ( organization_id ) REFERENCES Organization ( id ),
- CONSTRAINT unique_fullname UNIQUE (firstName, lastName, patronymic)
+ 
+ INDEX fkIdx_118 (Chief_id),
+ INDEX fkIdx_132 (Organization_id),
+ UNIQUE INDEX fullName USING btree (FirstName, LastName, Patronymic)
 )
 COMMENT = 'Таблица содержащая данные Людей участвующих в процессе';
 
--- tel_mobile      varchar(250) NOT NULL DEFAULT '',
--- tel_work        varchar(250) NOT NULL DEFAULT '',
--- e_mail          varchar(250) NOT NULL DEFAULT '',
 -- 3 ************************************** management.Order
 
 CREATE TABLE IF NOT EXISTS Orders
@@ -52,7 +54,9 @@ CREATE TABLE IF NOT EXISTS Orders
  lastUpdate      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_21 FOREIGN KEY ( Customer_id ) REFERENCES People ( id ),
- CONSTRAINT unique_order UNIQUE (NameOrder)
+ 
+ INDEX fkIdx_22 ( Customer_id ),
+ UNIQUE INDEX IdxNameOrder ( NameOrder )
 )
 COMMENT = 'Таблица содержащая заказы';
 
@@ -64,7 +68,7 @@ CREATE TABLE IF NOT EXISTS TypeAssembly
  NameAssembly varchar(250) NOT NULL,
  LastUpdate   timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
- CONSTRAINT unique_assembly UNIQUE (NameAssembly)
+ UNIQUE INDEX IdxNameAssembly (NameAssembly)
 );
 
 -- 5 ************************************** prepare.Module
@@ -78,7 +82,9 @@ CREATE TABLE IF NOT EXISTS Module
  LastUpdate     timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_72 FOREIGN KEY ( Constructor_id ) REFERENCES People ( id ),
- CONSTRAINT unique_Module UNIQUE (NameModule)
+ 
+ UNIQUE INDEX IdxModuleName (NameModule),
+ INDEX fkIdx_73 ( Constructor_id )
 );
 
 -- 6 ************************************** prepare.Goods
@@ -93,7 +99,9 @@ CREATE TABLE IF NOT EXISTS Goods
  LastUpdate      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_34 FOREIGN KEY ( TypeAssembly_id ) REFERENCES TypeAssembly ( id ),
- CONSTRAINT unique_Goods UNIQUE (NameGoods)
+  
+ UNIQUE INDEX IdxNameGoods ( NameGoods ),
+ INDEX fkIdx_35 ( TypeAssembly_id )
 );
 
 -- 7 ************************************** management.OrderSpecification
@@ -108,7 +116,10 @@ CREATE TABLE IF NOT EXISTS OrderSpecification
  LastUpdate  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
  CONSTRAINT FK_52 FOREIGN KEY ( Order_id ) REFERENCES Orders ( id ),
- CONSTRAINT FK_93 FOREIGN KEY ( Module_id ) REFERENCES Module ( id )
+ CONSTRAINT FK_93 FOREIGN KEY ( Module_id ) REFERENCES Module ( id ),
+ 
+ INDEX fkIdx_53 ( Order_id ),
+ INDEX fkIdx_94 ( Module_id )
 );
 
 -- 8 ************************************** purchase.Invoice
@@ -120,8 +131,8 @@ CREATE TABLE IF NOT EXISTS Invoice
  DataCreate  date NOT NULL,
  Payment     decimal(20, 6) NOT NULL DEFAULT 0,
  LastUpdate  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
- CONSTRAINT unique_Invoice UNIQUE (NameInvoice)
+ 
+ UNIQUE INDEX IdxNameInvoice ( NameInvoice )
 );
 
 -- 9 ************************************** purchase.CommercialOfferGoods
@@ -149,7 +160,9 @@ CREATE TABLE IF NOT EXISTS CommercialOfferGoods
  CONSTRAINT FK_199 FOREIGN KEY ( Supplier_id ) REFERENCES Organization ( id ),
  CONSTRAINT FK_202 FOREIGN KEY ( Manager_id ) REFERENCES People ( id ),
  CONSTRAINT FK_245 FOREIGN KEY ( Invoice_id ) REFERENCES Invoice ( id ),
- CONSTRAINT Check_Price CHECK ( PricePurchase >= 0 )
+ CONSTRAINT Check_Price CHECK ( PricePurchase >= 0 ),
+ 
+ INDEX fkIdx_co_goods ( GoodsManufacture_id )
 );
 
 -- 10 ************************************** prepare.CommercialOfferAssembly
