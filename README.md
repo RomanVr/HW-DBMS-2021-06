@@ -346,8 +346,27 @@ SELECT count(g.NameGoods) as count, sum(co.PricePurchase*co.QuantityPurchase) as
   2. Анализируем свой проект - добавляем или обновляем индексы.
   3. В README пропишите какие индексы были изменены или добавлены, explain и результаты выборки без индекса и с индексом.;
   - Решение:
-  2. Доблены индексы на ForeignKey и индексы на поля содержащие имена в текстовом виде, для таблицы People сделан составной индекс
+  1. Полнотекстовый поиск
+  - создание полнотекстового индекса
+  ```
+  FULLTEXT FullIdxNameDescription (`NameGoods`,`Description`)
+  ```
+  - запрос
+```
+SELECT id, NameGoods, Description FROM Goods WHERE MATCH(NameGoods,Description) AGAINST ('0402');
+```
+  2. Добавлены индексы на ForeignKey и индексы на поля содержащие имена в текстовом виде, для таблицы People сделан составной индекс
   ```
   INDEX fullName (FirstName, LastName, Patronymic)
   ```
-  3.
+  3. Анализ индексов
+  ```
+  SELECT id, NameGoods, Description
+	FROM Goods
+    WHERE NameGoods = 'GRM155R61E105K (0402 X5R 1 мкФ ±10% 25 В)';
+  ```
+  - без индекса
+    - id,  select_type, table,   partitions, type,    possible_keys, key,            key_len, ref,    rows,  filtered, Extra
+'1', 'SIMPLE',    'Goods', NULL,       'ALL',   NULL,          NULL,           NULL,    NULL,   '242', '0.41',   'Using where'
+  - с индексом
+    - '1', 'SIMPLE',    'Goods', NULL,       'const', 'IdxNameGoods','IdxNameGoods', '1002', 'const', '1',   '100.00', NULL

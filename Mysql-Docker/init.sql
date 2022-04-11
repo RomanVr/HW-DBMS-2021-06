@@ -101,7 +101,8 @@ CREATE TABLE IF NOT EXISTS Goods
  CONSTRAINT FK_34 FOREIGN KEY ( TypeAssembly_id ) REFERENCES TypeAssembly ( id ),
   
  UNIQUE INDEX IdxNameGoods ( NameGoods ),
- INDEX fkIdx_35 ( TypeAssembly_id )
+ INDEX fkIdx_35 ( TypeAssembly_id ),
+ FULLTEXT FullIdxNameDescription (`NameGoods`,`Description`)
 );
 
 -- 7 ************************************** management.OrderSpecification
