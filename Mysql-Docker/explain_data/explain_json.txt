@@ -1,0 +1,136 @@
+{
+  "query_block": {
+    "select_id": 1,
+    "cost_info": {
+      "query_cost": "85.37"
+    },
+    "nested_loop": [
+      {
+        "table": {
+          "table_name": "OrderSpecification",
+          "access_type": "ref",
+          "possible_keys": [
+            "fkIdx_53",
+            "fkIdx_94"
+          ],
+          "key": "fkIdx_53",
+          "used_key_parts": [
+            "Order_id"
+          ],
+          "key_length": "8",
+          "ref": [
+            "const"
+          ],
+          "rows_examined_per_scan": 3,
+          "rows_produced_per_join": 3,
+          "filtered": "100.00",
+          "cost_info": {
+            "read_cost": "0.50",
+            "eval_cost": "0.30",
+            "prefix_cost": "0.80",
+            "data_read_per_join": "96"
+          },
+          "used_columns": [
+            "id",
+            "Order_id",
+            "Module_id",
+            "Quantity"
+          ]
+        }
+      },
+      {
+        "table": {
+          "table_name": "Module",
+          "access_type": "eq_ref",
+          "possible_keys": [
+            "PRIMARY"
+          ],
+          "key": "PRIMARY",
+          "used_key_parts": [
+            "id"
+          ],
+          "key_length": "4",
+          "ref": [
+            "orderManSys.OrderSpecification.Module_id"
+          ],
+          "rows_examined_per_scan": 1,
+          "rows_produced_per_join": 3,
+          "filtered": "100.00",
+          "using_index": true,
+          "cost_info": {
+            "read_cost": "3.00",
+            "eval_cost": "0.30",
+            "prefix_cost": "4.10",
+            "data_read_per_join": "3K"
+          },
+          "used_columns": [
+            "id"
+          ]
+        }
+      },
+      {
+        "table": {
+          "table_name": "ModuleSpecification",
+          "access_type": "ref",
+          "possible_keys": [
+            "FK_41",
+            "FK_76"
+          ],
+          "key": "FK_76",
+          "used_key_parts": [
+            "Module_Id"
+          ],
+          "key_length": "4",
+          "ref": [
+            "orderManSys.OrderSpecification.Module_id"
+          ],
+          "rows_examined_per_scan": 55,
+          "rows_produced_per_join": 165,
+          "filtered": "100.00",
+          "cost_info": {
+            "read_cost": "6.75",
+            "eval_cost": "16.56",
+            "prefix_cost": "27.41",
+            "data_read_per_join": "173K"
+          },
+          "used_columns": [
+            "Goods_Id",
+            "Module_Id",
+            "Quantity",
+            "unit"
+          ]
+        }
+      },
+      {
+        "table": {
+          "table_name": "Goods",
+          "access_type": "eq_ref",
+          "possible_keys": [
+            "PRIMARY"
+          ],
+          "key": "PRIMARY",
+          "used_key_parts": [
+            "id"
+          ],
+          "key_length": "8",
+          "ref": [
+            "orderManSys.ModuleSpecification.Goods_Id"
+          ],
+          "rows_examined_per_scan": 1,
+          "rows_produced_per_join": 165,
+          "filtered": "100.00",
+          "using_index": true,
+          "cost_info": {
+            "read_cost": "41.40",
+            "eval_cost": "16.56",
+            "prefix_cost": "85.37",
+            "data_read_per_join": "328K"
+          },
+          "used_columns": [
+            "id"
+          ]
+        }
+      }
+    ]
+  }
+}

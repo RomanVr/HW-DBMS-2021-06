@@ -379,3 +379,29 @@ SELECT id, NameGoods, Description FROM Goods WHERE MATCH(NameGoods,Description) 
   4. Попробуйте оптимизировать запрос (можно использовать индексы, хинты, сбор статистики, гистограммы).
   5. Все действия и результаты опишите в README.md.
 - Решение:
+  1. Выбираем запрос Select из запроса на обновления таблицы Коммерческого Предложения Заказа
+  ```
+  	SELECT OrderSpecification.id as OrderSp_id, Goods.id as GoodsCustomer_id, ModuleSpecification.Quantity*OrderSpecification.Quantity as QuantitySpecification, ModuleSpecification.unit as unit
+		FROM OrderSpecification
+			INNER JOIN Module ON Module.id = OrderSpecification.Module_id
+			INNER JOIN ModuleSpecification ON ModuleSpecification.Module_Id = Module.id
+			INNER JOIN Goods ON Goods.id = ModuleSpecification.Goods_Id
+		WHERE OrderSpecification.Order_id = 2;
+  ```
+  2.
+  - Табличное представление Explain содержит 4 простых выборки из таблиц, использующих либо Primary Key либо Forein Key для индексации запросов уникальных и неуникальных индексов соответственно. Длина ключа составляет 4 или 8 байт. По значению filtered будет просмотрено 100% записей и по значению row будет выбрано 55 строк. Для двух таблиц Goods и Module используются покрывающие индексы.
+   - Визуальный план отображает последовательность выборки:
+    OrderSpecification 3 rows -> Module (1 row) 3 rows -> ModuleSpecification (55 rows) 165 rows -> Goods (1 rows) итог 165 rows
+    Похоже для получения уникальных данных соединение к таблицы Goods является избыточным
+  <code>![explain](./Mysql-Docker/explain_data/explain_query.png)</code>
+  - [Результат в формате json](./Mysql-Docker/explain_data/explain_json.txt)
+  - Представление в виде дерева:
+    ```
+    -> Nested loop inner join  (cost=83.12 rows=166)
+      -> Nested loop inner join  (cost=25.16 rows=166)
+          -> Nested loop inner join  (cost=1.85 rows=3)
+              -> Index lookup on OrderSpecification using fkIdx_53 (Order_id=2)  (cost=0.80 rows=3)
+              -> Single-row covering index lookup on Module using PRIMARY (id=OrderSpecification.Module_id)  (cost=0.28 rows=1)
+          -> Index lookup on ModuleSpecification using FK_76 (Module_Id=OrderSpecification.Module_id)  (cost=4.09 rows=55)
+      -> Single-row covering index lookup on Goods using PRIMARY (id=ModuleSpecification.Goods_Id)  (cost=0.25 rows=1)
+    ```
