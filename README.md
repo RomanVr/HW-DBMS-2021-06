@@ -22,7 +22,8 @@
 - [13. Отчетная выборка](#13)
 - [14. Индексы MySQL](#14)
 - [15. Анализ и профилирование запроса](#15)
-
+- [16. Хранимые процедуры и триггеры](#16)
+---
 ## <a id="1" /> 1. Общее описаниие, ER-диаграмма
 ### Структура организации состоит из отделов:
 - Отдел по работе с клиентами
@@ -43,7 +44,7 @@
 + Составление коммерческих предложений в разных вариациях по составу
 + Составление логистических и финансовых отчетов
 + Отслеживание всего заказа на всех его этапах от начала выставления коммерческого предложения до моммента отправки заказчику
-
+---
 ## <a id="2" /> 2. Дополнительные Ограничения и Индексы
 - table "People"
     - При создании таблицы добавляем ограничение на поле Age, которое ограничивает диапазон возраста.
@@ -77,14 +78,16 @@
     ```
     CONSTRAINT Check_Price CHECK ( PricePurchase > 0 )
     ```
+---
 ## <a id="3" /> 3. Установка Postgres и подключение
   - Connect to Postgres from Docker![gif](./dockerConn.gif)
   - Connect to Postgres from PG Admin![gif](./pgAdminConn.gif)
+---
 ## <a id="4" /> 4. Создание объектов БД
   - [setup](./sql_scripts/setup_DB/pg-setup.sql)
   - [create tables](./sql_scripts/setup_DB/create_tables.sql)
   - [create users](./sql_scripts/setup_DB/create_users.sql)
-
+---
 ## <a id="5" /> 5. DML: вставка, обновление, удаление, выборка данных
 - Вставка данных
 ```
@@ -132,6 +135,7 @@ DELETE FROM management.commercialofferorder
 	USING management.orderspecification
 		WHERE commercialofferorder.ordersp_id = orderspecification."Id" and orderspecification.module_id = 1;
 ```
+---
 ## <a id="6" /> 6. Индексы и план запросов. Indexes and Explain
 
   - 1. Cоздание простого индекса
@@ -197,7 +201,7 @@ DELETE FROM management.commercialofferorder
     Индекс сильно сокращает время выборки
 
   - 5. Основное, с чем столкнулся это то, что индекс не подключается при малых записях в таблице и при большой выборке записей. Так же в поиске текстовых полях когда сравнение по оператору like индекс тоже не подключается
-
+---
 ## <a id="7" /> 7. DML: агрегация и сортировка, CTE, аналитические функции
 
   - Задание: Посчитать кол-во очков по всем игрокам за текущий год и за предыдущий.
@@ -234,7 +238,7 @@ DELETE FROM management.commercialofferorder
   select player_name, points, year_game, LAG(points) OVER(partition by player_name order by year_game asc) as last_points
   from public.statistic;
   ```
-
+---
 ## <a id="8" /> 8. Репликация физическая и логическая
   - Задание:
     - Физическая репликация:
@@ -252,7 +256,7 @@ DELETE FROM management.commercialofferorder
   - Решение
     - Replication Postgres from Docker![gif](./pgReplica.gif)
     - Logical Postgres from Docker![gif](./pgLogical.gif)
-
+---
 ## <a id="9" /> 9. Создание базы данных MySql в Docker
   - Задание: Упаковка скриптов создания БД в контейнер
   1. забрать стартовый репозиторий https://github.com/aeuge/otus-mysql-docker
@@ -263,7 +267,7 @@ DELETE FROM management.commercialofferorder
   - Решение:
     - [Скрипт init](./Mysql-Docker/init.sql)
     - [Файл конфига](./Mysql-Docker/custom.conf/my.cnf)
-
+---
 ## <a id="10" /> 10. Типы данных в MySQL
   - Задание: Вдумчиво подбираем нужные типы данных. Определяемся с типом ID. Изучаем тип JSON
   1. Проанализировать типы данных в своем проекте, изменить при необходимости. В README указать что на что поменялось и почему.
@@ -282,7 +286,7 @@ DELETE FROM management.commercialofferorder
   2. JSON:
   - [Скрипт select](./Mysql-Docker/scripts/json_select.sql)
   - [Скрипт inset](./Mysql-Docker/scripts/json_insert.sql)
-
+---
 ## <a id="11" /> 11. SQL выборка
   - Задание: Научиться джойнить таблицы и использовать условия в SQL выборке
   1. Напишите запрос по своей базе с inner join
@@ -292,7 +296,7 @@ DELETE FROM management.commercialofferorder
   - [Выбор спецификации конкретного модуля](./Mysql-Docker/scripts/select_inner.sql)
   - [Выбор сводной коммерческого предложения все хкомпонентов в одном заказе](./Mysql-Docker/scripts/select_left_join.sql)
   - [Запросы с WHERE](./Mysql-Docker/scripts/select_where.sql)
-
+---
 ## <a id="12" /> 12. Транзакции
   - Задание: Заполнение своего проекта данными
   1. Описать пример транзакции из своего проекта с изменением данных в нескольких таблицах. Реализовать в виде хранимой процедуры.
@@ -304,7 +308,7 @@ DELETE FROM management.commercialofferorder
   - Решение:
   1. [Хранимая процедура для изменения данных в спецификации модуля и последующее изменение заказа компонентов](./Mysql-Docker/scripts/procedureUpdateOrder.sql)
   2. [Скрипт создание таблицы и загрузки в нее данных](./Mysql-Docker/load_csv/create_and_load_table.sql)
-
+---
 ## <a id="13" /> 13. Отчетная выборка
   - Задание: Научиться создавать отчетную выборку, предоставить результат
 группировки с ипользованием CASE, HAVING, ROLLUP, GROUPING():
@@ -341,6 +345,7 @@ SELECT count(g.NameGoods) as count, sum(co.PricePurchase*co.QuantityPurchase) as
     GROUP BY g.Description WITH ROLLUP
     ORDER BY count;
   ```
+---
 ## <a id="14" /> 14. Индексы MySQL
   - Задание: Пересматриваем индексы на своем проекте. По необходимости меняем.
   1. Сделать полнотекстовый индекс, который ищет по свойствам, названию товара и описанию.
@@ -371,6 +376,7 @@ SELECT id, NameGoods, Description FROM Goods WHERE MATCH(NameGoods,Description) 
 '1', 'SIMPLE',    'Goods', NULL,       'ALL',   NULL,          NULL,           NULL,    NULL,   '242', '0.41',   'Using where'
   - с индексом
     - '1', 'SIMPLE',    'Goods', NULL,       'const', 'IdxNameGoods','IdxNameGoods', '1002', 'const', '1',   '100.00', NULL
+---
 ## <a id="15" /> 15. Анализ и профилирование запросов
 - Задание: Проанализировать план выполнения запроса, заценить на чем теряется время.
   1. Возьмите сложную выборку из предыдущих ДЗ с несколькими join и подзапросами.
@@ -405,3 +411,13 @@ SELECT id, NameGoods, Description FROM Goods WHERE MATCH(NameGoods,Description) 
           -> Index lookup on ModuleSpecification using FK_76 (Module_Id=OrderSpecification.Module_id)  (cost=4.09 rows=55)
       -> Single-row covering index lookup on Goods using PRIMARY (id=ModuleSpecification.Goods_Id)  (cost=0.25 rows=1)
     ```
+---
+## <a id="16" /> 16. Хранимые процедуры и триггеры
+- Задание: Добавляем в базу хранимые процедуры и триггеры. Научиться создавать пользователей, процедуры и триггеры
+  1. Создать пользователей client, manager.
+  2. Создать процедуру выборки товаров с использованием различных фильтров: категория, цена, производитель, различные дополнительные параметры Также в качестве параметров передавать по какому полю сортировать выборку, и параметры постраничной выдачи.
+  3. Дать права да запуск процедуры пользователю client.
+  4. Создать процедуру get_orders - которая позволяет просматривать отчет по продажам за определенный период (час, день, неделя) с различными уровнями группировки (по товару, по категории, по производителю)Создать процедуру get_orders - которая позволяет просматривать отчет по продажам за определенный период (час, день, неделя) с различными уровнями группировки (по товару, по категории, по производителю).
+  5. Права дать пользователю manager.
+- Решение:
+  1.
