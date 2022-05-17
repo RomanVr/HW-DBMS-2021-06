@@ -420,4 +420,12 @@ SELECT id, NameGoods, Description FROM Goods WHERE MATCH(NameGoods,Description) 
   4. Создать процедуру get_orders - которая позволяет просматривать отчет по продажам за определенный период (час, день, неделя) с различными уровнями группировки (по товару, по категории, по производителю)Создать процедуру get_orders - которая позволяет просматривать отчет по продажам за определенный период (час, день, неделя) с различными уровнями группировки (по товару, по категории, по производителю).
   5. Права дать пользователю manager.
 - Решение:
-  1.
+  1. [Процедура для фильтрации](./Mysql-Docker/scripts/proc_filter.sql)
+  2. Создание пользователя с правами на запуск процедуры
+  ```
+  CREATE USER 'client'@'localhost' IDENTIFIED BY 'test12345';
+  CREATE USER 'manager'@'localhost' IDENTIFIED BY 'test12345';
+  GRANT EXECUTE ON PROCEDURE orderManSys.queryFilter TO 'test_user'@'localhost';
+  GRANT EXECUTE ON PROCEDURE orderManSys.get_orders TO 'manager'@'localhost';
+  ```
+  3. [Процедура get_orders](./Mysql-Docker/scripts/proc_get_orders.sql)
