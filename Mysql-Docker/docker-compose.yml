@@ -5,7 +5,7 @@ services:
     image: mysql:8.0.15
     container_name: otusdb
     environment:
-      - MYSQL_ROOT_PASSWORD=12345
+      - MYSQL_ROOT_PASSWORD=root12345
     command:
       --init-file /init.sql
     volumes:

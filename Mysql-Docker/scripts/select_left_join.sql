@@ -1,4 +1,4 @@
--- Выбор сводной коммерческого предложения все хкомпонентов в одном заказе
+-- Выбор сводной коммерческого предложения всех компонентов в одном заказе
 SELECT Module.NameModule, Goods.NameGoods, CommercialOfferOrder.QuantitySpecification, CommercialOfferOrder.unit, CommercialOfferOrder.Purchase, CommercialOfferOrder.DatePurchase
 	FROM CommercialOfferOrder
 		LEFT JOIN CommercialOfferGoods ON CommercialOfferOrder.ComOfferGoods_id = CommercialOfferGoods.id
