@@ -3,3 +3,41 @@ mysqldump -u root -p orderManSys > backup1.sql
 
 Восстановление, предварительно создать БД orderManSys
 mysql -u root -p orderManSys < backup1.sql
+
+Создание backup для БД world только структура
+mysqldump -d world --host=localhost --port=3306 --user=root --password > base/backup_base_1.sql
+
+Создание backup для БД world целиком
+mysqldump world -u root -p > base/backup_base_1.sql
+
+Создание БД 
+sudo mysql world2 < base/backup_base_2.sql
+
+Восстановление в новую БД
+sudo mysql -u root -p world2 < base/backup_base_2.sql
+
+Установка xtrabackup, проверка версии
+xtrabackup -v
+
+xtrabackup Делаем backup
+#xtrabackup --backup --target-dir=/tmp/backups/xtrabackup/base --host=localhost --port=3306 --user=root --password=example 
+sudo xtrabackup --backup --no-server-version-check --target-dir=/tmp/backups/xtrabackup/base 
+
+Восстановление
+#### Prepare
+sudo xtrabackup --prepare --apply-log-only --target-dir=/tmp/backups/xtrabackup/base
+#### Copy
+sudo xtrabackup --copy-back \
+    --target-dir=/tmp/backups/xtrabackup/base \
+    --datadir=/var/lib/mysql
+Восстанавливаем права
+sudo chown -R mysql.mysql /var/lib/mysql
+
+#### Stream into file - backup в один файл
+sudo xtrabackup --backup --no-server-version-check \
+    --stream=xbstream --compress \
+    --target-dir=/tmp/backups/xtrabackup/stream \
+    > stream/backup_cmprs.xbstream
+
+Unpack the backup to the current directory
+xbstream -x <  backup.xbstream

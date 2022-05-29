@@ -435,4 +435,41 @@ SELECT id, NameGoods, Description FROM Goods WHERE MATCH(NameGoods,Description) 
 - Задание: Задача восстановить конкретную таблицу из сжатого и шифрованного бэкапа. Осваиваем инструмент для резервного копирования и восстановления - xtrabackup
   1.
 - Решение:
-  1.
+  1. Расшифровываем файл:
+  ```
+  openssl des3 -salt -k "password" -d \ 
+    -in stream/backup_des.xbstream.gz.des3 \
+    -out stream/backup_des.xbstream.gz
+  ```
+  2. Распаковка файла:
+  ```
+  gzip -d stream/backup_des.xbstream.gz 
+  ```
+  3. Извлечение backup:
+  ```
+  xbstream -x < backup_des.xbstream
+  ```
+  4. Подготовка backup
+  ```
+  sudo xtrabackup --prepare --export --target-dir=/tmp/backups/xtrabackup/world_backup
+  ```
+  5. Подготовка БД world
+  ```
+  mysql
+  create database world;
+  world < world_db.sql;
+  alter table city discard tablespace;
+  ```
+  6. Копирование и назначение прав
+  ```
+  sudo cp world_backup/world/city.ibd /var/lib/mysql/world
+  sudo chown -R mysql.mysql /var/lib/mysql/world/city.ibd
+  ```
+  7. Восстановление tablespace
+  ```
+  sudo mysql world
+  alter table city import tablespace;
+  select count(*) from city where countrycode = 'RUS';
+  ```
+  8. Результат - 189
+  
