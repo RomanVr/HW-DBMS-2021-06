@@ -10,7 +10,7 @@ services:
       --init-file /init.sql
     volumes:
       - data:/var/lib/mysql
-      - /data_for_copy/:/var/lib/mysql-files/data_for_copy/
+      - ./data_for_copy/:/var/lib/mysql-files/data_for_copy/
       - ./init.sql:/init.sql
       - ./custom.conf:/etc/mysql/conf.d
     expose:
