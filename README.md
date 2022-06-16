@@ -535,4 +535,4 @@ SELECT id, NameGoods, Description FROM Goods WHERE MATCH(NameGoods,Description) 
 
   5.ER-diagram
 
-  <code>![ER-diagram](/Mysql-Docker/Innodb-cluster/view/ERdiagram.png "ER-diagram")</code>
+  <code>![ER-diagram](/Mysql-Docker/Innodb-cluster/view/ER-diagram.png "ER-diagram")</code>
