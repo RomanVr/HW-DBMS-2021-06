@@ -1,0 +1,3 @@
+Учебник. Создание многоконтейнерных приложений с помощью MySQL и Docker Compose
+https://docs.microsoft.com/ru-ru/visualstudio/docker/tutorials/tutorial-multi-container-app-mysql
+
