@@ -1,3 +1,48 @@
-1. Распаковка gz
-  - gzip some_customers.csv
-2.
+1.
+-- Распаковка gz
+gzip some_customers.csv
+
+
+2. Сборка кластера
+
+-- запуск всех контейнеров
+docker-compose up
+
+-- подключение к mysqlsh
+docker exec -it server-1 mysqlsh -u root -p
+docker exec -it server-2 mysqlsh -u root -p
+docker exec -it server-3 mysqlsh -u root -p
+
+-- сконфигурируем инстанс на всех нодах, заодно включатся GTID и т.д.
+dba.configureLocalInstance("root@localhost:3306");
+
+-- в режиме js не выходя из mysqlsh
+shell.connect('root@9adac2776f4e:3306');
+
+-- проверить права пользователя
+SELECT * FROM mysql.user WHERE User = 'root'\G
+
+\js
+-- попытаемся по документации создать кластер
+cluster = dba.createCluster('my_innodb_cluster');
+cluster.status()
+-- "statusText": "Cluster is NOT tolerant to any failures.",
+-- подключим ноды
+-- варианты подключения - клонирование и инкрементальное с помощью GTID
+cluster.addInstance('root@fec51c538227:3306');
+cluster.addInstance('root@09758e346af7:3306');
+
+-- для устранения сбоев при перезагрузке ноды 
+\js
+cluster.rescan();
+
+
+-- show variables like 'group_replication_ip_whitelist';
+show variables like 'group_replication%';
+
+-- разобрать кластер
+cluster.dissolve({force:true})
+
+- 
+docker exec -it server-1 mysql -u root -p
+
